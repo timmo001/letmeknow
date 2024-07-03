@@ -7,6 +7,7 @@ type Client struct {
 	UserID     *string
 }
 
+// TODO: Make sure registration contains password/token
 type ClientRegistration struct {
 	UserID string `json:"userID"`
 }

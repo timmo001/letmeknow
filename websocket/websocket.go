@@ -10,6 +10,9 @@ import (
 	"timmo.dev/letmeknowio/server/types"
 )
 
+// TODO: Add user authentication, so only authenticated users can send messages
+// TODO: Check if user is allowed to send messages to other users
+
 var addr = flag.String("addr", "localhost:8080", "http service address")
 
 var upgrader = websocket.Upgrader{} // use default options
@@ -107,6 +110,9 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 			clientRegistration := types.ClientRegistration{
 				UserID: request["userID"].(string),
 			}
+
+			// TODO: Check if userID is already registered
+			
 
 			// Set userID for client
 			for i, client := range connectedClients {
