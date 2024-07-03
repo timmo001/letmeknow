@@ -36,12 +36,12 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 		log.Printf("recv: %s", messageIn)
 
 		// Parse JSON
-		var data map[string]interface{}
-		err = json.Unmarshal(messageIn, &data)
+		var request map[string]interface{}
+		err = json.Unmarshal(messageIn, &request)
 		if err != nil {
 			log.Println("Error parsing JSON:", err)
 			// Send error message
-			resp := types.Error{Message: "Error parsing JSON", Error: err.Error()}
+			resp := types.ResponseError{Message: "Error parsing JSON", Error: err.Error()}
 			message, err := json.Marshal(resp)
 			if err != nil {
 				log.Println("Error marshalling JSON:", err)
@@ -50,15 +50,12 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 			c.WriteMessage(mt, message)
 			break
 		}
-
-		// Print JSON
-		log.Printf("data: %v", data)
 
 		// Validate JSON is of type Message
-		if _, ok := data["message"]; !ok {
+		if _, ok := request["message"]; !ok {
 			log.Println("Error: JSON is not of type Message")
 			// Send error message
-			resp := types.Error{Message: "Error: JSON is not of type Message", Error: ""}
+			resp := types.ResponseError{Message: "Error: JSON is not of type Message", Error: ""}
 			message, err := json.Marshal(resp)
 			if err != nil {
 				log.Println("Error marshalling JSON:", err)
@@ -68,14 +65,13 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		// TODO: Do something with the Message data
-
-		// Convert JSON to bytes
-		messageIn, err = json.Marshal(data)
-		if err != nil {
-			log.Println("Error marshalling JSON:", err)
-			break
+		// Convert request to Message
+		message := types.RequestMessage{
+			Message: request["message"].(string),
+			Targets: request["targets"].([]string),
 		}
+
+		// TODO: Do something with the Message
 
 		// Send message to all clients
 		for _, client := range connectedClients {
@@ -84,15 +80,29 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 				continue
 			}
 
+			// Only send message to clients that are requested
+			if len(message.Targets) > 0 {
+				found := false
+				for _, target := range message.Targets {
+					if target == client.RemoteAddr().String() {
+						found = true
+						break
+					}
+				}
+				if !found {
+					continue
+				}
+			}
+
 			err = client.WriteMessage(mt, messageIn)
 			if err != nil {
-				log.Println("Error writing message:", err)
+				log.Println("Error writing message to client:", err)
 				break
 			}
 		}
 
 		// Send success message
-		resp := types.Success{Succeeded: true, Message: "Message sent"}
+		resp := types.ResponseSuccess{Succeeded: true, Message: "Message sent"}
 		messageOut, err := json.Marshal(resp)
 		if err != nil {
 			log.Println("Error marshalling JSON:", err)
