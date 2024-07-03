@@ -75,11 +75,6 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 
 		// Send message to all clients
 		for _, client := range connectedClients {
-			// Don't send message to the client that sent it
-			if client == c {
-				continue
-			}
-
 			// Only send message to clients that are requested
 			if len(message.Targets) > 0 {
 				found := false
@@ -90,6 +85,11 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 				if !found {
+					continue
+				}
+			} else {
+				// Don't send message to the client that sent it, if sending to all clients
+				if client == c {
 					continue
 				}
 			}
