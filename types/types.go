@@ -1,10 +1,21 @@
 package types
 
-import "github.com/gorilla/websocket"
+import (
+	"fmt"
+
+	"github.com/gorilla/websocket"
+)
 
 type Client struct {
 	Connection *websocket.Conn
 	UserID     *string
+}
+
+func (c *Client) Display() string {
+	if c.UserID == nil {
+		return fmt.Sprintf("Client(Connection=%s, UserID=nil)", c.Connection.RemoteAddr())
+	}
+	return fmt.Sprintf("Client(Connection=%s, UserID=%s)", c.Connection.RemoteAddr(), *c.UserID)
 }
 
 // TODO: Make sure registration contains password/token

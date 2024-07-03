@@ -17,7 +17,17 @@ var addr = flag.String("addr", "localhost:8080", "http service address")
 
 var upgrader = websocket.Upgrader{} // use default options
 
-var connectedClients []types.Client
+type ConnectedClients []types.Client
+
+var connectedClients ConnectedClients
+
+func (cc ConnectedClients) Display() []string {
+	var clients []string
+	for _, client := range cc {
+		clients = append(clients, client.Display())
+	}
+	return clients
+}
 
 func sendMessage(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
@@ -33,6 +43,9 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 			Connection: c,
 		},
 	)
+	log.Println("Client connected:", c.RemoteAddr())
+
+	log.Println("Connected clients:", connectedClients.Display())
 
 	for {
 		mt, messageIn, err := c.ReadMessage()
@@ -51,7 +64,7 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 			errString := err.Error()
 			resp := types.ResponseError{
 				Message: "Error parsing JSON",
-				Error: &errString,
+				Error:   &errString,
 			}
 			message, err := json.Marshal(resp)
 			if err != nil {
@@ -111,19 +124,35 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 				UserID: request["userID"].(string),
 			}
 
-			// TODO: Check if userID is already registered
-			
-
 			// Set userID for client
+			alreadyRegistered := false
 			for i, client := range connectedClients {
 				if client.Connection == c {
+					// Check if userID is already registered
+					if client.UserID != nil {
+						log.Println("Error: Client already registered with userID:", *client.UserID)
+						alreadyRegistered = true
+						break
+					}
+
 					connectedClients[i].UserID = &clientRegistration.UserID
 					break
 				}
 			}
 
 			// Send success message
-			resp := types.ResponseSuccess{Succeeded: true, Message: "Client registered"}
+			var resp types.ResponseSuccess
+			if alreadyRegistered {
+				resp = types.ResponseSuccess{
+					Succeeded: false,
+					Message:   "Client already registered",
+				}
+			} else {
+				resp = types.ResponseSuccess{
+					Succeeded: true,
+					Message:   "Client registered",
+				}
+			}
 			message, err := json.Marshal(resp)
 			if err != nil {
 				log.Println("Error marshalling JSON:", err)
@@ -212,12 +241,16 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	log.Println("Client disconnected:", c.RemoteAddr())
+
 	// Remove client from connectedClients
 	for i, client := range connectedClients {
 		if client.Connection == c {
 			connectedClients = append(connectedClients[:i], connectedClients[i+1:]...)
 		}
 	}
+
+	log.Println("Connected clients:", connectedClients.Display())
 }
 
 func Setup() {
