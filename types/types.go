@@ -3,8 +3,12 @@ package types
 import "github.com/gorilla/websocket"
 
 type Client struct {
-	ID         string `json:"id"`
 	Connection *websocket.Conn
+	UserID     *string
+}
+
+type ClientRegistration struct {
+	UserID string `json:"userID"`
 }
 
 type RequestMessage struct {
@@ -13,8 +17,8 @@ type RequestMessage struct {
 }
 
 type ResponseError struct {
-	Message string `json:"message"`
-	Error   string `json:"error"`
+	Message string  `json:"message"`
+	Error   *string `json:"error"`
 }
 
 type ResponseSuccess struct {
