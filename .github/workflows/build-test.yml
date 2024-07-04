@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   build:
-    name: 🏗️🧪 Build and Test ${{ matrix.name }} (${{ matrix.platform }})
+    name: 🏗️🧪 Build & Test ${{ matrix.name }} (${{ matrix.platform }})
     strategy:
       fail-fast: false
       matrix:
