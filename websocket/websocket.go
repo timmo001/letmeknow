@@ -162,7 +162,29 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		// type is "message"
+		// Request type is "message"
+
+		// Check if client is registered with a userID
+		var clientRegistered bool = false
+		for _, client := range connectedClients {
+			if client.Connection == c && client.UserID != nil {
+				clientRegistered = true
+				break
+			}
+		}
+		if !clientRegistered {
+			log.Println("Error: Client not registered")
+			// Send error message
+			resp := types.ResponseError{Message: "Error: Client not registered"}
+			message, err := json.Marshal(resp)
+			if err != nil {
+				log.Println("Error marshalling JSON:", err)
+				break
+			}
+			c.WriteMessage(mt, message)
+			continue
+		}
+
 		// Validate JSON contains message
 		if _, ok := request["message"]; !ok {
 			log.Println("Error: JSON is not of type Message")
