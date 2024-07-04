@@ -1,7 +1,7 @@
 package notification
 
 import (
-	types "letmeknow.timmo.dev/types/notification"
+	types "github.com/timmo001/letmeknow/types/notification"
 
 	"github.com/martinlindhe/notify"
 )

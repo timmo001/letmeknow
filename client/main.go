@@ -4,12 +4,12 @@ import (
 	"flag"
 	"log"
 
-	"letmeknow.timmo.dev/client/websocket"
+	websocketClient "github.com/timmo001/letmeknow/client/websocket"
 )
 
 func main() {
 	flag.Parse()
 	log.SetFlags(0)
 
-	websocket.Run()
+	websocketClient.Run()
 }
