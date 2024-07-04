@@ -19,22 +19,28 @@ concurrency:
 
 jobs:
   build:
-    name: 🏗️🧪 Build and Test Application
+    name: 🏗️🧪 Build and Test ${{ matrix.name }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - path: "client"
+          - name: "Client"
+            path: "client"
             platform: macos-latest
-          - path: "client"
+          - name: "Client"
+            path: "client"
             platform: ubuntu-latest
-          - path: "client"
+          - name: "Client"
+            path: "client"
             platform: windows-latest
-          - path: "server"
+          - name: "Server"
+            path: "server"
             platform: macos-latest
-          - path: "server"
+          - name: "Server"
+            path: "server"
             platform: ubuntu-latest
-          - path: "server"
+          - name: "Server"
+            path: "server"
             platform: windows-latest
     runs-on: ${{ matrix.platform }}
     steps:
