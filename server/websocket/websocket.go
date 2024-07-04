@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
-	"letmeknowio.timmo.dev/types"
+	types "letmeknowio.timmo.dev/types/websocket"
 )
 
 // TODO: Add user authentication, so only authenticated users can send messages
