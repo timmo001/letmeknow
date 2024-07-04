@@ -103,7 +103,6 @@ func setup() int {
 				log.Println("Error writing ping message:", err)
 				return 1
 			}
-			log.Println("Ping")
 		case <-interrupt:
 			log.Println("Interrupt from setup loop")
 
