@@ -15,7 +15,30 @@ import (
 
 var addr = flag.String("addr", "localhost:8080", "http service address")
 
-func Setup() {
+func Run() {
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt)
+
+	for {
+		// Attempt to reconnect after 10 seconds
+		select {
+		case <-interrupt:
+			log.Println("Interrupt from Run loop")
+			return
+		default:
+			code := setup()
+
+			if code == 0 {
+				break
+			}
+
+			log.Printf("Attempting to reconnect in 10 seconds")
+			time.Sleep(10 * time.Second)
+		}
+	}
+}
+
+func setup() int {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 
@@ -24,7 +47,8 @@ func Setup() {
 
 	c, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
-		log.Fatal("Dial:", err)
+		log.Println("Dial:", err)
+		return 1
 	}
 	defer c.Close()
 
@@ -35,7 +59,7 @@ func Setup() {
 		for {
 			_, message, err := c.ReadMessage()
 			if err != nil {
-				log.Println("Read:", err)
+				log.Println("Error reading message:", err)
 				return
 			}
 			log.Printf("Recv: %s", message)
@@ -43,52 +67,51 @@ func Setup() {
 	}()
 
 	// Send ping every 5 seconds
-	ticker := time.NewTicker(time.Second * 5)
+	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
 
 	// Register for the websocket
 	requestRegister := types.RequestRegister{
-		Type:  "register",
+		Type:   "register",
 		UserID: "test",
 	}
 	requestRegisterJSON, err := json.Marshal(requestRegister)
 	if err != nil {
 		log.Println("Error marshalling JSON:", err)
-		return
+		return 1
 	}
 	err = c.WriteMessage(websocket.TextMessage, requestRegisterJSON)
 	if err != nil {
 		log.Println("Error writing register message:", err)
-		return
+		return 1
 	}
 
 	for {
 		select {
 		case <-done:
-			return
+			return 1
 		case t := <-ticker.C:
 			err := c.WriteMessage(websocket.PingMessage, []byte(t.String()))
 			if err != nil {
 				log.Println("Error writing ping message:", err)
-				return
+				return 1
 			}
 			log.Println("Ping")
 		case <-interrupt:
-			log.Println("Interrupt")
+			log.Println("Interrupt from setup loop")
 
 			// Cleanly close the connection by sending a close message and then
 			// waiting (with timeout) for the server to close the connection.
 			err := c.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			if err != nil {
 				log.Println("write close:", err)
-				return
+				return 1
 			}
 			select {
 			case <-done:
 			case <-time.After(time.Second):
 			}
-			return
+			return 0
 		}
 	}
-
 }

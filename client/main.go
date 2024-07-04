@@ -12,5 +12,5 @@ func main() {
 	flag.Parse()
 	log.SetFlags(0)
 
-	websocket.Setup()
+	websocket.Run()
 }
