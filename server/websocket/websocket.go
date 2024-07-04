@@ -2,7 +2,6 @@ package websocket
 
 import (
 	"encoding/json"
-	"flag"
 	"log"
 	"net/http"
 
@@ -13,7 +12,6 @@ import (
 // TODO: Add user authentication, so only authenticated users can send messages
 // TODO: Check if user is allowed to send messages to other users
 
-var addr = flag.String("addr", "localhost:8080", "http service address")
 
 var upgrader = websocket.Upgrader{} // use default options
 
@@ -29,7 +27,7 @@ func (cc ConnectedClients) Display() []string {
 	return clients
 }
 
-func sendMessage(w http.ResponseWriter, r *http.Request) {
+func WebSocket(w http.ResponseWriter, r *http.Request) {
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Print("upgrade:", err)
@@ -273,11 +271,4 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("Connected clients:", connectedClients.Display())
-}
-
-func Setup() {
-	log.Println("Starting server on", *addr)
-
-	http.HandleFunc("/send", sendMessage)
-	log.Fatal(http.ListenAndServe(*addr, nil))
 }
