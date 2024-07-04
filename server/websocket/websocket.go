@@ -276,6 +276,8 @@ func sendMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func Setup() {
+	log.Println("Starting server on", *addr)
+
 	http.HandleFunc("/send", sendMessage)
 	log.Fatal(http.ListenAndServe(*addr, nil))
 }
