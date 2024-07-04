@@ -1,4 +1,4 @@
-module letmeknowio.timmo.dev
+module letmeknow.timmo.dev
 
 go 1.22.4
 

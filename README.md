@@ -1,3 +1,3 @@
-# LetMeKnowIO
+# LetMeKnow
 
 Notifications portal

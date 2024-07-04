@@ -4,7 +4,7 @@ import (
 	"flag"
 	"log"
 
-	"letmeknowio.timmo.dev/client/websocket"
+	"letmeknow.timmo.dev/client/websocket"
 )
 
 
