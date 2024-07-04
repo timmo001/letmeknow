@@ -2,8 +2,9 @@ package main
 
 import (
 	"flag"
-	"letmeknowio/client/websocket"
 	"log"
+
+	"letmeknowio.timmo.dev/client/websocket"
 )
 
 

@@ -19,11 +19,13 @@ func (c *Client) Display() string {
 }
 
 // TODO: Make sure registration contains password/token
-type ClientRegistration struct {
+type RequestRegister struct {
+	Type   string `json:"type"` // "register"
 	UserID string `json:"userID"`
 }
 
 type RequestMessage struct {
+	Type    string   `json:"type"` // "message"
 	Message string   `json:"message"`
 	Targets []string `json:"targets"`
 }

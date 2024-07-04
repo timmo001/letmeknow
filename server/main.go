@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"timmo.dev/letmeknowio/server/websocket"
+	"letmeknowio.timmo.dev/server/websocket"
 )
 
 var addr = flag.String("addr", "localhost:8080", "http service address")

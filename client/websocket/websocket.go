@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"encoding/json"
 	"flag"
 	"log"
 	"net/url"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"letmeknowio.timmo.dev/shared/types"
 )
 
 var addr = flag.String("addr", "localhost:8080", "http service address")
@@ -44,6 +46,22 @@ func Setup() {
 	ticker := time.NewTicker(time.Second * 5)
 	defer ticker.Stop()
 
+	// Register for the websocket
+	requestRegister := types.RequestRegister{
+		Type:  "register",
+		UserID: "test",
+	}
+	requestRegisterJSON, err := json.Marshal(requestRegister)
+	if err != nil {
+		log.Println("Error marshalling JSON:", err)
+		return
+	}
+	err = c.WriteMessage(websocket.TextMessage, requestRegisterJSON)
+	if err != nil {
+		log.Println("Error writing register message:", err)
+		return
+	}
+
 	for {
 		select {
 		case <-done:
@@ -51,7 +69,7 @@ func Setup() {
 		case t := <-ticker.C:
 			err := c.WriteMessage(websocket.PingMessage, []byte(t.String()))
 			if err != nil {
-				log.Println("Write:", err)
+				log.Println("Error writing ping message:", err)
 				return
 			}
 			log.Println("Ping")

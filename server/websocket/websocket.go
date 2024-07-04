@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
-	"timmo.dev/letmeknowio/server/types"
+	"letmeknowio.timmo.dev/shared/types"
 )
 
 // TODO: Add user authentication, so only authenticated users can send messages
@@ -118,7 +118,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 			}
 
 			// Convert request to ClientRegistration
-			clientRegistration := types.ClientRegistration{
+			clientRegistration := types.RequestRegister{
 				UserID: request["userID"].(string),
 			}
 
