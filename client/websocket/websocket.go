@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"letmeknowio.timmo.dev/shared/types"
+	"letmeknowio.timmo.dev/types"
 )
 
 var addr = flag.String("addr", "localhost:8080", "http service address")

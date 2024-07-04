@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
-	"letmeknowio.timmo.dev/shared/types"
+	"letmeknowio.timmo.dev/types"
 )
 
 // TODO: Add user authentication, so only authenticated users can send messages
@@ -51,7 +51,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 			log.Println("read:", err)
 			break
 		}
-		log.Printf("recv: %s", messageIn)
+		log.Printf("Recv: %s", messageIn)
 
 		// Parse JSON
 		var request map[string]interface{}
