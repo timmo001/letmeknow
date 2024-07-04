@@ -11,5 +11,7 @@ func main() {
 	flag.Parse()
 	log.SetFlags(0)
 
+	log.Println("Starting client...")
+
 	websocketClient.Run()
 }
