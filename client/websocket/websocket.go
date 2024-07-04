@@ -33,7 +33,14 @@ func Run() {
 			}
 
 			log.Printf("Attempting to reconnect in 10 seconds")
-			time.Sleep(10 * time.Second)
+			// Make sleep interruptible
+			select {
+			case <-time.After(10 * time.Second):
+				// Sleep for 10 seconds or until interrupt
+			case <-interrupt:
+				log.Println("Interrupt during sleep")
+				return
+			}
 		}
 	}
 }
