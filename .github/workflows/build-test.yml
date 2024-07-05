@@ -24,18 +24,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - name: "Client"
-          #   path: "client"
-          #   platform: macos-latest
-          - name: "Client"
-            path: "client"
-            platform: ubuntu-latest
-          - name: "Client"
-            path: "client"
-            platform: windows-latest
-          # - name: "Server"
-          #   path: "server"
-          #   platform: macos-latest
+          - name: "Server"
+            path: "server"
+            platform: macos-latest
           - name: "Server"
             path: "server"
             platform: ubuntu-latest
