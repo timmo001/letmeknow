@@ -14,11 +14,13 @@
         "title": "LetMeKnow",
         "width": 370,
         "height": 60,
-        "x": 16,
-        "y": 16,
+        "x": 24,
+        "y": 24,
+        "acceptFirstMouse": false,
         "alwaysOnTop": true,
         "decorations": false,
         "fullscreen": false,
+        "resizable": false,
         "shadow": false,
         "transparent": true
       }
