@@ -45,6 +45,7 @@ jobs:
             arch: aarch64
             arch-go: arm64
           - name: "windows-x86_64"
+            platform: windows-latest
             arch: x86_64
             arch-go: amd64
     runs-on: ${{ matrix.platform }}
