@@ -14,29 +14,16 @@
   <h1>Welcome to Tauri!</h1>
 </div>
 
-<style>
-  :root {
-    font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    line-height: 24px;
-    font-weight: 400;
-
-    color: #ffffff;
-    background-color: transparent;
-
-    font-synthesis: none;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-text-size-adjust: 100%;
-  }
-
+<style lang="postcss">
   .container {
     margin: 0;
-    padding-top: 10vh;
+    padding: 0.8rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
+    background-color: rgba(15, 23, 42, 0.6);
+    border-radius: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
 </style>

@@ -1,7 +1,7 @@
 {
   "productName": "letmeknow-client",
   "version": "0.0.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "dev.timmo.letmeknow.client",
   "build": {
     "beforeDevCommand": "bun run dev",
     "devUrl": "http://localhost:1420",
@@ -13,9 +13,9 @@
       {
         "title": "letmeknow-client",
         "width": 370,
-        "height": 400,
-        "x": 8,
-        "y": 8,
+        "height": 60,
+        "x": 16,
+        "y": 16,
         "alwaysOnTop": true,
         "decorations": false,
         "fullscreen": false,

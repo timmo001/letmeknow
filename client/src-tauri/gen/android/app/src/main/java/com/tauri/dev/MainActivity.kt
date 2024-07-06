@@ -1,3 +1,3 @@
-package com.tauri.dev
+package dev.timmo.letmeknow.client
 
 class MainActivity : TauriActivity()
