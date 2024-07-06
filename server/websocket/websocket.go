@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
+	typesNotification "github.com/timmo001/letmeknow/server/types/notification"
 	types "github.com/timmo001/letmeknow/server/types/websocket"
 )
 
@@ -65,6 +66,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 			// Send error message
 			errString := err.Error()
 			resp := types.ResponseError{
+				Type:    "error",
 				Message: "Error parsing JSON",
 				Error:   &errString,
 			}
@@ -81,7 +83,10 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 		if _, ok := request["type"]; !ok {
 			log.Println("Error: JSON does not contain type")
 			// Send error message
-			resp := types.ResponseError{Message: "Error: JSON does not contain type"}
+			resp := types.ResponseError{
+				Type:    "error",
+				Message: "Error: JSON does not contain type",
+			}
 			message, err := json.Marshal(resp)
 			if err != nil {
 				log.Println("Error marshalling JSON:", err)
@@ -91,11 +96,14 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		// If type is not "register" or "message", send error message
-		if request["type"] != "register" && request["type"] != "message" {
-			log.Println("Error: JSON type is not 'register' or 'message'")
+		// If type is not "register" or "notification", send error message
+		if request["type"] != "register" && request["type"] != "notification" {
+			log.Println("Error: JSON type is not 'register' or 'notification'")
 			// Send error message
-			resp := types.ResponseError{Message: "Error: JSON type is not 'register' or 'message'"}
+			resp := types.ResponseError{
+				Type:    "error",
+				Message: "Error: JSON type is not 'register' or 'notification'",
+			}
 			message, err := json.Marshal(resp)
 			if err != nil {
 				log.Println("Error marshalling JSON:", err)
@@ -111,7 +119,10 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 			if _, ok := request["userID"]; !ok {
 				log.Println("Error: JSON does not contain userID")
 				// Send error message
-				resp := types.ResponseError{Message: "Error: JSON does not contain userID"}
+				resp := types.ResponseError{
+					Type:    "error",
+					Message: "Error: JSON does not contain userID",
+				}
 				message, err := json.Marshal(resp)
 				if err != nil {
 					log.Println("Error marshalling JSON:", err)
@@ -142,15 +153,19 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
+			log.Println("Connected clients:", connectedClients.Display())
+
 			// Send success message
 			var resp types.ResponseSuccess
 			if alreadyRegistered {
 				resp = types.ResponseSuccess{
+					Type:      "register",
 					Succeeded: false,
 					Message:   "Client already registered",
 				}
 			} else {
 				resp = types.ResponseSuccess{
+					Type:      "register",
 					Succeeded: true,
 					Message:   "Client registered",
 				}
@@ -164,7 +179,7 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 
-		// Request type is "message"
+		// Request type is "notification"
 
 		// Check if client is registered with a userID
 		var clientRegistered bool = false
@@ -177,7 +192,10 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 		if !clientRegistered {
 			log.Println("Error: Client not registered")
 			// Send error message
-			resp := types.ResponseError{Message: "Error: Client not registered"}
+			resp := types.ResponseError{
+				Type:    "error",
+				Message: "Error: Client not registered",
+			}
 			message, err := json.Marshal(resp)
 			if err != nil {
 				log.Println("Error marshalling JSON:", err)
@@ -188,10 +206,13 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Validate JSON contains message
-		if _, ok := request["message"]; !ok {
-			log.Println("Error: JSON is not of type Message")
+		if _, ok := request["data"]; !ok {
+			log.Println("Error: JSON is not of type Notification")
 			// Send error message
-			resp := types.ResponseError{Message: "Error: JSON is not of type Message"}
+			resp := types.ResponseError{
+				Type:    "error",
+				Message: "Error: JSON is not of type Notification",
+			}
 			message, err := json.Marshal(resp)
 			if err != nil {
 				log.Println("Error marshalling JSON:", err)
@@ -201,21 +222,69 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		// Convert request to Message
-		message := types.RequestMessage{
-			Message: request["message"].(string),
+		var title *string
+		var subtitle *string
+		var content *string
+
+		requestData := request["data"].(map[string]interface{})
+		if _, ok := requestData["title"]; ok {
+			t := requestData["title"].(string)
+			title = &t
+		}
+		if _, ok := requestData["subtitle"]; ok {
+			s := requestData["subtitle"].(string)
+			subtitle = &s
+		}
+		if _, ok := requestData["content"]; ok {
+			c := requestData["content"].(string)
+			content = &c
+		}
+
+		var image *typesNotification.Image
+		if _, ok := requestData["image"]; ok {
+			var requestDataImage = requestData["image"].(map[string]interface{})
+			var height float32
+			var width float32
+			var url string
+
+			if _, ok := requestDataImage["height"]; ok {
+				height = float32(requestDataImage["height"].(float64))
+			}
+			if _, ok := requestDataImage["width"]; ok {
+				width = float32(requestDataImage["width"].(float64))
+			}
+			if _, ok := requestDataImage["url"]; ok {
+				url = requestDataImage["url"].(string)
+			}
+
+			image = &typesNotification.Image{
+				Height: height,
+				Width:  width,
+				URL:    url,
+			}
+		}
+
+		// Convert request to Notification
+		notification := types.RequestNotification{
+			Data: typesNotification.Notification{
+				Type:     "notification",
+				Title:    title,
+				Subtitle: subtitle,
+				Content:  content,
+				Image:    image,
+			},
 			Targets: []string{},
 		}
 
 		if _, ok := request["targets"]; ok {
 			targets := request["targets"].([]interface{})
 			for _, target := range targets {
-				message.Targets = append(message.Targets, target.(string))
+				notification.Targets = append(notification.Targets, target.(string))
 			}
 		}
 
 		// Prepare message to send to clients
-		messageOut, err := json.Marshal(message)
+		messageOut, err := json.Marshal(notification.Data)
 		if err != nil {
 			log.Println("Error marshalling JSON:", err)
 			break
@@ -224,9 +293,9 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 		// Send message to all clients
 		for _, client := range connectedClients {
 			// Only send message to clients that are requested
-			if message.Targets != nil && len(message.Targets) > 0 {
+			if notification.Targets != nil && len(notification.Targets) > 0 {
 				found := false
-				for _, target := range message.Targets {
+				for _, target := range notification.Targets {
 					if target == *client.UserID {
 						found = true
 						break
@@ -250,7 +319,11 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Send success message
-		resp := types.ResponseSuccess{Succeeded: true, Message: "Message sent"}
+		resp := types.ResponseSuccess{
+			Type:      "notificationSent",
+			Succeeded: true,
+			Message:   "Message sent",
+		}
 		messageSuccess, err := json.Marshal(resp)
 		if err != nil {
 			log.Println("Error marshalling JSON:", err)

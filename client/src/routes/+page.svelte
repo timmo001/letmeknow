@@ -2,16 +2,26 @@
   import { onMount } from "svelte";
   import { getCurrent, LogicalSize } from "@tauri-apps/api/window";
 
+  import type { Register } from "../types/register";
   import type { Notification } from "../types/notification";
 
-  const DEFAULT_NOTIFICATION: Notification = {
-    title: "LetMeKnow Client Started",
+  const NOTIFICATION_CONNECTING: Notification = {
+    title: "LetMeKnow Client Connecting",
+    subtitle: "Connecting to server...",
+    timeout: 5000,
+  };
+
+  const NOTIFICATION_CONNECTED: Notification = {
+    title: "LetMeKnow Client Connected",
     subtitle: "Listening for notifications...",
     timeout: 5000,
   };
 
   let height: number = 60.0;
-  let notification: Notification = DEFAULT_NOTIFICATION;
+  let notification: Notification = NOTIFICATION_CONNECTING;
+
+  let timeoutReconnect: NodeJS.Timeout | null = null;
+  let timeoutHide: NodeJS.Timeout | null = null;
 
   async function hideWindow(): Promise<void> {
     console.log("Hiding window");
@@ -83,15 +93,23 @@
     if (!n.timeout) n.timeout = 10000;
 
     // Hide the window after the timeout
-    setTimeout(() => {
+    if (timeoutHide) clearTimeout(timeoutHide);
+    timeoutHide = setTimeout(() => {
       hideWindow();
     }, n.timeout);
   }
 
   async function reconnectToServer(): Promise<void> {
+    // updateData({
+    //   title: "LetMeKnow Client Disconnected",
+    //   subtitle: "Reconnecting to server in 5 seconds...",
+    //   timeout: 5000,
+    // });
+
     // Reconnect to the server
     console.log("Reconnecting to the server in 5s");
-    setTimeout(() => {
+    if (timeoutReconnect) clearTimeout(timeoutReconnect);
+    timeoutReconnect = setTimeout(() => {
       setupServerConnection();
     }, 5000);
   }
@@ -114,7 +132,14 @@
 
       socket.onopen = () => {
         console.log("Connection established");
-        updateData(DEFAULT_NOTIFICATION);
+        updateData(NOTIFICATION_CONNECTED);
+
+        // Register the client with the server
+        const register: Register = {
+          type: "register",
+          userID: "client", // TODO: Use a real user ID
+        };
+        socket.send(JSON.stringify(register));
       };
 
       socket.onmessage = (event) => {
@@ -124,15 +149,21 @@
         try {
           data = JSON.parse(event.data);
         } catch (error) {
-          console.error("Error:", error);
+          console.error("Error parsing JSON:", error);
+        }
+
+        console.log("Data type:", data.type);
+
+        // Test if data is a successful registration
+        if (data.type === "register" && data.success) {
+          console.log("Registration successful");
+          return;
         }
 
         // Test if data is a valid notification
-        if (
-          data.type === "notification" &&
-          (data.title || data.subtitle || data.content || data.image)
-        ) {
-          updateData({ ...data });
+        if (data.type === "notification") {
+          const notification: Notification = data;
+          updateData(notification);
         }
       };
     } catch (error) {
@@ -142,6 +173,7 @@
   }
 
   onMount(() => {
+    updateData(NOTIFICATION_CONNECTING);
     setupServerConnection()
       .then(() => {
         console.log("Server setup completed");

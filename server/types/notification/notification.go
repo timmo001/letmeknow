@@ -3,9 +3,9 @@ package notification
 import "fmt"
 
 type Image struct {
-	Height float32
-	Width  float32
-	URL    string
+	Height float32 `json:"height"`
+	Width  float32 `json:"width"`
+	URL    string  `json:"url"`
 }
 
 func (i Image) Display() string {
@@ -13,10 +13,11 @@ func (i Image) Display() string {
 }
 
 type Notification struct {
-	Title    *string
-	Subtitle *string
-	Content  *string
-	Image    *Image
+	Type     string  `json:"type"` // "notification"
+	Title    *string `json:"title"`
+	Subtitle *string `json:"subtitle"`
+	Content  *string `json:"content"`
+	Image    *Image  `json:"image"`
 }
 
 func (n Notification) Display() string {
