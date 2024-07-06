@@ -119,6 +119,21 @@
 
       socket.onmessage = (event) => {
         console.log("Message received:", event.data);
+
+        let data;
+        try {
+          data = JSON.parse(event.data);
+        } catch (error) {
+          console.error("Error:", error);
+        }
+
+        // Test if data is a valid notification
+        if (
+          data.type === "notification" &&
+          (data.title || data.subtitle || data.content || data.image)
+        ) {
+          updateData({ ...data });
+        }
       };
     } catch (error) {
       console.error("Error:", error);
