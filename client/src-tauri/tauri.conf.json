@@ -11,7 +11,7 @@
   "app": {
     "windows": [
       {
-        "title": "letmeknow-client",
+        "title": "LetMeKnow",
         "width": 370,
         "height": 60,
         "x": 16,
