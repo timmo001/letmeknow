@@ -1,5 +1,5 @@
 ---
-name: "Build & Test"
+name: "Server - Build & Test"
 
 # yamllint disable-line rule:truthy
 on:
@@ -19,20 +19,14 @@ concurrency:
 
 jobs:
   build:
-    name: 🏗️🧪 Build & Test ${{ matrix.name }} (${{ matrix.platform }})
+    name: 🏗️🧪 Build & Test (${{ matrix.platform }})
     strategy:
       fail-fast: false
       matrix:
         include:
-          - name: "Server"
-            path: "server"
-            platform: macos-latest
-          - name: "Server"
-            path: "server"
-            platform: ubuntu-latest
-          - name: "Server"
-            path: "server"
-            platform: windows-latest
+          - platform: macos-latest
+          - platform: ubuntu-latest
+          - platform: windows-latest
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout repository
@@ -46,7 +40,7 @@ jobs:
           go-version: "stable"
       - name: Build
         run: go build -v ./...
-        working-directory: ${{ matrix.path }}
+        working-directory: server
       - name: Test
         run: go test -v ./...
-        working-directory: ${{ matrix.path }}
+        working-directory: server
