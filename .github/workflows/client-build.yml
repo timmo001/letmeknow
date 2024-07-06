@@ -26,19 +26,19 @@ jobs:
         include:
           - name: "macos-aarch64"
             platform: "macos-latest" # for Arm based macs (M1 and above).
-            args: "--target aarch64-apple-darwin"
+            target: "aarch64-apple-darwin"
           - name: "macos-x86_64"
             platform: "macos-latest" # for Intel based macs.
-            args: "--target x86_64-apple-darwin"
+            target: "x86_64-apple-darwin"
           - name: "linux-aarch64"
             platform: "ubuntu-22.04"
-            args: "--target aarch64-unknown-linux-gnu"
+            target: "aarch64-unknown-linux-gnu"
           - name: "linux-x86_64"
             platform: "ubuntu-22.04"
-            args: "--target x86_64-unknown-linux-gnu"
+            target: "x86_64-unknown-linux-gnu"
           - name: "windows-x86_64"
             platform: "windows-latest"
-            args: "--target x86_64-pc-windows-msvc"
+            target: "x86_64-pc-windows-msvc"
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Checkout repository
@@ -61,8 +61,7 @@ jobs:
       - name: Rust setup
         uses: dtolnay/rust-toolchain@stable
         with:
-          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ matrix.target }}
       - name: Rust cache
         uses: swatinem/rust-cache@v2.7.3
         with:
@@ -71,7 +70,7 @@ jobs:
         run: bun install
         working-directory: client
       - name: Build and package the client
-        run: bun run tauri build ${{ matrix.args }}
+        run: bun run tauri build --target ${{ matrix.target }}
         working-directory: client
       - name: Upload artifacts
         uses: actions/upload-artifact@v4.3.4
