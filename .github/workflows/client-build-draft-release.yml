@@ -61,18 +61,16 @@ jobs:
           # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
       - name: Rust cache
-        if: matrix.platform == 'ubuntu-22.04'
         uses: swatinem/rust-cache@v2.7.3
         with:
-          shared-key: shared
           workspaces: "./src-tauri -> target"
-      - name: Install
+      - name: Install frontend dependencies
         run: bun install
         working-directory: client
-      - name: Build
+      - name: Build and package the client
         run: bun run tauri build ${{ matrix.args }}
         working-directory: client
-      - name: Upload Artifact
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4.3.3
         with:
           name: client-${{ matrix.name }}
