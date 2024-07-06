@@ -1,0 +1,78 @@
+---
+name: "Client - Build"
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: 🏗️ Build ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "macos-aarch64"
+            platform: "macos-latest" # for Arm based macs (M1 and above).
+            args: "--target aarch64-apple-darwin"
+          - name: "macos-x86_64"
+            platform: "macos-latest" # for Intel based macs.
+            args: "--target x86_64-apple-darwin"
+          - name: "linux-x86_64"
+            platform: "ubuntu-22.04"
+            args: ""
+          - name: "windows-x86_64"
+            platform: "windows-latest"
+            args: ""
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.1.7
+        with:
+          ref: ${{ github.head_ref }}
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04' # This must match the platform value defined above.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+      - name: Sync node version and setup cache
+        uses: actions/setup-node@v4.0.2
+        with:
+          check-latest: true
+          node-version: "lts/*"
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "latest"
+      - name: Rust setup
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2.7.3
+        with:
+          workspaces: "./src-tauri -> target"
+      - name: Install frontend dependencies
+        run: bun install
+        working-directory: client
+      - name: Build and package the client
+        run: bun run tauri build ${{ matrix.args }}
+        working-directory: client
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4.3.3
+        with:
+          name: client-${{ matrix.name }}
+          path: |
+            client/src-tauri/target/**/release/bundle

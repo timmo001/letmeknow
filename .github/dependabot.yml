@@ -5,13 +5,18 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-  - package-ecosystem: "gomod"
-    directory: "/server"
+  - package-ecosystem: "npm"
+    directory: "/client"
+    open-pull-requests-limit: 20
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "cargo"
+    directory: "/client/src-tauri"
     open-pull-requests-limit: 20
     schedule:
       interval: "daily"
   - package-ecosystem: "gomod"
-    directory: "/types"
+    directory: "/server"
     open-pull-requests-limit: 20
     schedule:
       interval: "daily"

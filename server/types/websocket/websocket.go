@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gorilla/websocket"
+	typesNotification "github.com/timmo001/letmeknow/server/types/notification"
 )
 
 type Client struct {
@@ -24,18 +25,20 @@ type RequestRegister struct {
 	UserID string `json:"userID"`
 }
 
-type RequestMessage struct {
-	Type    string   `json:"type"` // "message"
-	Message string   `json:"message"`
-	Targets []string `json:"targets"`
+type RequestNotification struct {
+	Type    string                         `json:"type"` // "notification"
+	Data    typesNotification.Notification `json:"data"`
+	Targets []string                       `json:"targets"`
 }
 
 type ResponseError struct {
+	Type    string  `json:"type"`
 	Message string  `json:"message"`
 	Error   *string `json:"error"`
 }
 
 type ResponseSuccess struct {
+	Type      string `json:"type"`
 	Succeeded bool   `json:"succeeded"`
 	Message   string `json:"message"`
 }
