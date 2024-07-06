@@ -12,8 +12,12 @@ import (
 // TODO: Add user authentication, so only authenticated users can send messages
 // TODO: Check if user is allowed to send messages to other users
 
-
-var upgrader = websocket.Upgrader{} // use default options
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		// Allow connections from any origin
+		return true
+	},
+}
 
 type ConnectedClients []types.Client
 
