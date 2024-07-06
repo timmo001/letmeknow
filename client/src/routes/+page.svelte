@@ -7,7 +7,7 @@
   const DEFAULT_NOTIFICATION: Notification = {
     title: "LetMeKnow Client Started",
     subtitle: "Listening for notifications...",
-    timeout: 4000,
+    timeout: 5000,
   };
 
   let height: number = 60.0;
@@ -24,7 +24,7 @@
   }
 
   async function resize(
-    height: number = 60,
+    height: number = 66,
     width: number = 370
   ): Promise<void> {
     console.log("Resizing window:", { width, height });
@@ -37,6 +37,8 @@
     // Update the window size up to 10 times. Allows the window to resize properly with images loading.
     let counter = 0;
     const interval = setInterval(() => {
+      counter++;
+
       // Get .container element height
       const container = document.querySelector(".container");
       if (!container) return;
@@ -54,7 +56,7 @@
 
       // Resize the window
       resize(heightValue);
-      counter++;
+
       // 500ms * 20 = 10s
       if (counter > 20) clearInterval(interval);
     }, 500);
