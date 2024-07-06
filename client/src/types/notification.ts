@@ -9,4 +9,5 @@ export type Notification = {
   subtitle?: string | null;
   content?: string | null;
   image?: Image | null;
+  timeout?: number | null;
 };
