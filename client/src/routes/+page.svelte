@@ -78,31 +78,42 @@
     updateWindowSize();
   }
 
+  function reconnectToServer(): void {
+    // Reconnect to the server
+    console.log("Reconnecting to the server in 5s");
+    setTimeout(() => {
+      setupServerConnection();
+    }, 5000);
+  }
+
   function setupServerConnection(): void {
     // Setup server connection
     console.log("Setting up server connection");
 
-    const socket = new WebSocket("ws://localhost:8080/websocket");
+    try {
+      const socket = new WebSocket("ws://localhost:8080/websocket");
 
-    socket.onclose = () => {
-      console.log("Connection closed");
-      // Reconnect after 5 seconds
-      setTimeout(() => setupServerConnection, 5000);
-    };
+      socket.onclose = () => {
+        console.log("Connection closed");
+        reconnectToServer();
+      };
 
-    socket.onerror = (error) => {
+      socket.onerror = (error) => {
+        console.error("Error:", error);
+        reconnectToServer();
+      };
+
+      socket.onopen = () => {
+        console.log("Connection established");
+      };
+
+      socket.onmessage = (event) => {
+        console.log("Message received:", event.data);
+      };
+    } catch (error) {
       console.error("Error:", error);
-      // Reconnect after 5 seconds
-      setTimeout(() => setupServerConnection, 5000);
-    };
-
-    socket.onopen = () => {
-      console.log("Connection established");
-    };
-
-    socket.onmessage = (event) => {
-      console.log("Message received:", event.data);
-    };
+      reconnectToServer();
+    }
   }
 
   onMount(() => {
