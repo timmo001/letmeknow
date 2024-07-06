@@ -100,7 +100,6 @@
 
       socket.onerror = (error) => {
         console.error("Error:", error);
-        reconnectToServer();
       };
 
       socket.onopen = () => {
