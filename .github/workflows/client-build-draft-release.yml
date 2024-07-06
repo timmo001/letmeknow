@@ -77,4 +77,4 @@ jobs:
         with:
           name: client-${{ matrix.name }}
           path: |
-            client/src-tauri/target/release/bundle
+            client/src-tauri/target/**/release/bundle
