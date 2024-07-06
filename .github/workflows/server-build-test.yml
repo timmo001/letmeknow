@@ -30,9 +30,9 @@ jobs:
           - name: "macos-x86_64"
             platform: macos-latest
             arch: amd64
-          - name: "linux-aarch64"
-            platform: ubuntu-latest
-            arch: arm64
+          # - name: "linux-aarch64"
+          #   platform: ubuntu-latest
+          #   arch: arm64
           - name: "linux-x86_64"
             platform: ubuntu-latest
             arch: amd64
