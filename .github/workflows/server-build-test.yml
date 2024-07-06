@@ -29,13 +29,16 @@ jobs:
             arch: arm64
           - name: "macos-x86_64"
             platform: macos-latest
-            arch: x86_64
+            arch: amd64
           - name: "linux-aarch64"
             platform: ubuntu-latest
             arch: arm64
           - name: "linux-x86_64"
             platform: ubuntu-latest
-            arch: x86_64
+            arch: amd64
+          - name: "windows-aarch64"
+            platform: windows-latest
+            arch: arm64
           - name: "windows-x86_64"
             platform: windows-latest
             arch: amd64
