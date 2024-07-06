@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/websocket"
-	types "github.com/timmo001/letmeknow/types/websocket"
+	types "github.com/timmo001/letmeknow/server/types/websocket"
 )
 
 // TODO: Add user authentication, so only authenticated users can send messages
