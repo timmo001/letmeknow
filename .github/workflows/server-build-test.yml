@@ -19,15 +19,29 @@ concurrency:
 
 jobs:
   build:
-    name: 🏗️🧪 Build & Test ${{ matrix.platform }}
+    name: 🏗️🧪 Build & Test ${{ matrix.name }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - platform: macos-latest
-          - platform: ubuntu-latest
-          - platform: windows-latest
+          - name: "macos-aarch64"
+            platform: macos-latest
+            arch: arm64
+          - name: "macos-x86_64"
+            platform: macos-latest
+            arch: x86_64
+          - name: "linux-aarch64"
+            platform: ubuntu-latest
+            arch: arm64
+          - name: "linux-x86_64"
+            platform: ubuntu-latest
+            arch: x86_64
+          - name: "windows-x86_64"
+            platform: windows-latest
+            arch: amd64
     runs-on: ${{ matrix.platform }}
+    env:
+      GOARCH: ${{ matrix.arch }} # Set the GOARCH environment variable
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.1.7
@@ -39,8 +53,14 @@ jobs:
           check-latest: true
           go-version: "stable"
       - name: Build
-        run: go build -v ./...
+        run: go build -o letmeknow-server-x86_64${{ matrix.platform == 'windows-latest' && '.exe' || '' }} -v .
         working-directory: server
       - name: Test
         run: go test -v ./...
         working-directory: server
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4.3.4
+        with:
+          name: server-${{ matrix.name }}
+          path: |
+            server/letmeknow-server-x86_64${{ matrix.platform == 'windows-latest' && '.exe' || '' }}
