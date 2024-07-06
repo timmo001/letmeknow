@@ -2,16 +2,16 @@
   import { onMount } from "svelte";
   import { getCurrent, LogicalSize } from "@tauri-apps/api/window";
 
-  import type { Notification } from "../types/notificaiton";
+  import type { Notification } from "../types/notification";
+
+  const DEFAULT_NOTIFICATION: Notification = {
+    title: "LetMeKnow Client Started",
+    subtitle: "Listening for notifications...",
+    timeout: 4000,
+  };
 
   let height: number = 60.0;
-  let notification: Notification = {
-    title: "Title",
-    subtitle: "Subtitle",
-    content:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec fermentum nunc.",
-    image: { url: "https://via.placeholder.com/480x270" },
-  };
+  let notification: Notification = DEFAULT_NOTIFICATION;
 
   async function hideWindow(): Promise<void> {
     console.log("Hiding window");
@@ -60,7 +60,7 @@
     }, 500);
   }
 
-  function updateData(n: Notification): void {
+  async function updateData(n: Notification): Promise<void> {
     // Update data
     console.log("Updating data:", n);
 
@@ -76,9 +76,17 @@
 
     // Update the window size
     updateWindowSize();
+
+    // Set the default timeout if not provided
+    if (!n.timeout) n.timeout = 10000;
+
+    // Hide the window after the timeout
+    setTimeout(() => {
+      hideWindow();
+    }, n.timeout);
   }
 
-  function reconnectToServer(): void {
+  async function reconnectToServer(): Promise<void> {
     // Reconnect to the server
     console.log("Reconnecting to the server in 5s");
     setTimeout(() => {
@@ -86,7 +94,7 @@
     }, 5000);
   }
 
-  function setupServerConnection(): void {
+  async function setupServerConnection(): Promise<void> {
     // Setup server connection
     console.log("Setting up server connection");
 
@@ -104,6 +112,7 @@
 
       socket.onopen = () => {
         console.log("Connection established");
+        updateData(DEFAULT_NOTIFICATION);
       };
 
       socket.onmessage = (event) => {
@@ -116,10 +125,14 @@
   }
 
   onMount(() => {
-    updateData(notification);
-    // hideWindow();
-    // showWindow();
-    setupServerConnection();
+    setupServerConnection()
+      .then(() => {
+        console.log("Server setup completed");
+      })
+      .catch((error) => {
+        console.error("Caught error:", error);
+        reconnectToServer();
+      });
   });
 </script>
 
@@ -151,7 +164,7 @@
   }
 
   h1 {
-    @apply text-3xl font-medium mt-2;
+    @apply text-2xl font-medium mt-2;
   }
 
   h4 {
