@@ -59,6 +59,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5.0.1
         with:
+          cache-dependency-path: server/go.mod
           check-latest: true
           go-version: "stable"
       - name: Build
