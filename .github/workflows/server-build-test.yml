@@ -57,7 +57,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
       - name: Set up Go
-        uses: actions/setup-go@v5.0.1
+        uses: actions/setup-go@v5.0.2
         with:
           cache-dependency-path: server/go.mod
           check-latest: true
