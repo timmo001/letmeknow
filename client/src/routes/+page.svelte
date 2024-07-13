@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { invoke } from "@tauri-apps/api/core";
   import { getCurrent, LogicalSize } from "@tauri-apps/api/window";
   import { v4 as uuidv4 } from "uuid";
 
@@ -34,6 +35,7 @@
   async function showWindow(): Promise<void> {
     console.log("Showing window");
     await getCurrent().show();
+    await invoke("set_window", {});
   }
 
   async function resize(
