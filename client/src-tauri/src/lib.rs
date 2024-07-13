@@ -10,8 +10,6 @@ use tauri::{
 
 #[tauri::command]
 async fn set_window(app: tauri::AppHandle) -> Result<(), String> {
-    println!("Setting window properties");
-    
     // Get the main window
     let window = app.get_webview_window("main").unwrap();
 
