@@ -32,7 +32,7 @@
         "title": "Settings | LetMeKnow",
         "url": "/settings",
         "width": 480,
-        "height": 320,
+        "height": 310,
         "center": true,
         "decorations": false,
         "focus": true,

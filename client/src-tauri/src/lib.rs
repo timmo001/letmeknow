@@ -8,6 +8,7 @@ mod settings;
 mod shared;
 
 use tauri::{
+    Emitter,
     menu::{MenuBuilder, MenuItemBuilder, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconEvent},
     Manager,
@@ -17,6 +18,7 @@ use tauri_plugin_autostart::MacosLauncher;
 use crate::{
     autostart::setup_autostart,
     logger::setup_logger,
+    settings::{get_settings, update_settings},
 };
 
 #[tauri::command]
@@ -51,6 +53,10 @@ async fn set_window(app: tauri::AppHandle) -> Result<(), String> {
 }
 
 pub fn run() {
+    // Initial setup of settings
+    get_settings();
+
+    // Setup logger
     setup_logger().unwrap();
 
     tauri::Builder::default()
@@ -59,11 +65,14 @@ pub fn run() {
             Some(vec![]),
         ))
         .plugin(tauri_plugin_shell::init())
-        .invoke_handler(tauri::generate_handler![set_window])
+        .invoke_handler(tauri::generate_handler![get_settings, set_window, update_settings])
         .setup(|app| {
             {
                 // Setup autostart
                 setup_autostart(app).unwrap();
+
+                // Hide the settings window
+                app.get_webview_window("settings").unwrap().hide().unwrap();
 
                 // Setup tray menu
                 let separator = PredefinedMenuItem::separator(app)?;
@@ -90,7 +99,20 @@ pub fn run() {
                 });
                 tray.on_menu_event(move |app, event| match event.id().as_ref() {
                     "show_settings" => {
-                        app.get_webview_window("settings").unwrap().show().unwrap();
+                        // Get the settings window
+                        let window = app.get_webview_window("settings").unwrap();
+
+                        // Send the show event to the window 
+                        window.emit("show", {}).unwrap();
+
+                        // Open devtools on startup
+                        #[cfg(debug_assertions)] // Only include this code on debug builds
+                        {
+                            window.open_devtools();
+                        };
+
+                        // Focus the window
+                        window.set_focus().unwrap();
                     }
                     "exit" => {
                         std::process::exit(0);

@@ -4,8 +4,12 @@
   import { getCurrent, LogicalSize } from "@tauri-apps/api/window";
   import { v4 as uuidv4 } from "uuid";
 
-  import type { Register } from "../types/register";
-  import type { Notification } from "../types/notification";
+  import type { Notification } from "$lib/types/notification";
+  import type { Register } from "$lib/types/register";
+  import type { Settings } from "$lib/types/settings";
+  import { DEFAULT_SETTINGS } from "$lib/constants";
+
+  let settings: Settings = DEFAULT_SETTINGS;
 
   const userID = `client-${uuidv4().replaceAll("-", "")}`;
 
@@ -124,7 +128,9 @@
     console.log("Setting up server connection");
 
     try {
-      const socket = new WebSocket("ws://localhost:8080/websocket");
+      const socket = new WebSocket(
+        `ws://${settings.server.host}:${settings.server.port}/websocket`
+      );
 
       socket.onclose = () => {
         console.log("Connection closed");
@@ -178,15 +184,19 @@
   }
 
   onMount(() => {
-    updateData(NOTIFICATION_CONNECTING);
-    setupServerConnection()
-      .then(() => {
-        console.log("Server setup completed");
-      })
-      .catch((error) => {
-        console.error("Caught error:", error);
-        reconnectToServer();
-      });
+    invoke("get_settings").then((data) => {
+      settings = data as Settings;
+
+      updateData(NOTIFICATION_CONNECTING);
+      setupServerConnection()
+        .then(() => {
+          console.log("Server setup completed");
+        })
+        .catch((error) => {
+          console.error("Caught error:", error);
+          reconnectToServer();
+        });
+    });
   });
 </script>
 
