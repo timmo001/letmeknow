@@ -2,10 +2,21 @@
 #[macro_use]
 extern crate objc;
 
+mod autostart;
+mod logger;
+mod settings;
+mod shared;
+
 use tauri::{
     menu::{MenuBuilder, MenuItemBuilder, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconEvent},
     Manager,
+};
+use tauri_plugin_autostart::MacosLauncher;
+
+use crate::{
+    autostart::setup_autostart,
+    logger::setup_logger,
 };
 
 #[tauri::command]
@@ -40,11 +51,20 @@ async fn set_window(app: tauri::AppHandle) -> Result<(), String> {
 }
 
 pub fn run() {
+    setup_logger().unwrap();
+
     tauri::Builder::default()
+        .plugin(tauri_plugin_autostart::init(
+            MacosLauncher::LaunchAgent,
+            Some(vec![]),
+        ))
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![set_window])
         .setup(|app| {
             {
+                // Setup autostart
+                setup_autostart(app).unwrap();
+
                 // Setup tray menu
                 let separator = PredefinedMenuItem::separator(app)?;
                 let show_settings =
