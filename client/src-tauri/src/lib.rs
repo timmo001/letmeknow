@@ -38,6 +38,14 @@ pub fn run() {
                         // TODO: Send a message to the webview
                     }
                 });
+                tray.on_menu_event(|_, event| match event.menu_item_id {
+                    "show_settings" => {
+                        // TODO: Create a settings window
+                    }
+                    "exit" => {
+                        app.exit(0);
+                    }
+                });
             }
             Ok(())
         })
