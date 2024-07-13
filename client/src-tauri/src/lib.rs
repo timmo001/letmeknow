@@ -120,12 +120,13 @@ pub fn run() {
                     _ => {}
                 });
 
-                // Get the main window
-                let window = app.get_webview_window("main").unwrap();
-
                 // Open devtools on startup
                 #[cfg(debug_assertions)] // Only include this code on debug builds
                 {
+                    // Get the main window
+                    let window = app.get_webview_window("main").unwrap();
+
+                    // Open devtools
                     window.open_devtools();
                 };
             }
