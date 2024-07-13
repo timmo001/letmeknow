@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/websocket"
 	typesNotification "github.com/timmo001/letmeknow/server/types/notification"
@@ -296,6 +297,10 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 			if notification.Targets != nil && len(notification.Targets) > 0 {
 				found := false
 				for _, target := range notification.Targets {
+					if (strings.HasSuffix(target, "*") && strings.HasPrefix(*client.UserID, target[:len(target)-1])) || target == *client.UserID {
+						found = true
+						break
+					}
 					if target == *client.UserID {
 						found = true
 						break
