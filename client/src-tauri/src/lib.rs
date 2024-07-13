@@ -88,9 +88,9 @@ pub fn run() {
                         // TODO: Send a message to the webview
                     }
                 });
-                tray.on_menu_event(move |_app_handle, event| match event.id().as_ref() {
+                tray.on_menu_event(move |app, event| match event.id().as_ref() {
                     "show_settings" => {
-                        // TODO: Create a settings window
+                        app.get_webview_window("settings").unwrap().show().unwrap();
                     }
                     "exit" => {
                         std::process::exit(0);

@@ -11,6 +11,7 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "LetMeKnow",
         "url": "/",
         "width": 370,
@@ -23,6 +24,18 @@
         "focus": false,
         "fullscreen": false,
         "resizable": false,
+        "shadow": false,
+        "transparent": true
+      },
+      {
+        "label": "settings",
+        "title": "Settings | LetMeKnow",
+        "url": "/settings",
+        "width": 480,
+        "height": 320,
+        "center": true,
+        "decorations": false,
+        "focus": true,
         "shadow": false,
         "transparent": true
       }
