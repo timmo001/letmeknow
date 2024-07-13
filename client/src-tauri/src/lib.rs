@@ -55,7 +55,7 @@ pub fn run() {
                 window.close_devtools();
 
                 // Allow clickthrough on the window (macOS)
-                let _ = window.clone().with_webview(move |webview| {
+                let _ = window.clone().with_webview(move |_webview| {
                     #[cfg(target_os = "macos")]
                     unsafe {
                         let () = msg_send![webview.ns_window(), setIgnoresMouseEvents: true];
