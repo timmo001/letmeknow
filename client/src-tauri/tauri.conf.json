@@ -19,6 +19,7 @@
         "acceptFirstMouse": false,
         "alwaysOnTop": true,
         "decorations": false,
+        "focus": false,
         "fullscreen": false,
         "resizable": false,
         "shadow": false,
