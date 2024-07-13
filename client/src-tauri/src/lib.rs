@@ -54,20 +54,18 @@ pub fn run() {
                 window.open_devtools();
                 window.close_devtools();
 
-                // Allow clickthrough on the window (macOS)
                 let _ = window.clone().with_webview(move |_webview| {
+                    // Allow clickthrough on the window (macOS)
                     #[cfg(target_os = "macos")]
                     unsafe {
                         let () = msg_send![webview.ns_window(), setIgnoresMouseEvents: true];
                     }
-                });
 
-                // Allow clickthrough on the window (Windows)
-                let _ = window.clone().with_webview(move |_webview| {
+                    // Allow clickthrough on the window (Windows)
                     #[cfg(target_os = "windows")]
-                    let hwnd = window.hwnd().unwrap().0;
-                    let hwnd = windows::Win32::Foundation::HWND(hwnd);
                     unsafe {
+                        let hwnd = window.hwnd().unwrap().0;
+                        let hwnd = windows::Win32::Foundation::HWND(hwnd);
                         use windows::Win32::UI::WindowsAndMessaging::*;
                         let nindex = GWL_EXSTYLE;
                         let style = WS_EX_APPWINDOW
