@@ -14,36 +14,8 @@ pub fn run() {
         .setup(|app| {
             #[cfg(debug_assertions)] // Only include this code on debug builds
             {
+                // Get the main window
                 let window = app.get_webview_window("main").unwrap();
-
-                // Open devtools on start
-                window.open_devtools();
-                window.close_devtools();
-
-                // Allow clickthrough on the window (macOS)
-                let _ = window.clone().with_webview(move |webview| {
-                    #[cfg(target_os = "macos")]
-                    unsafe {
-                        let () = msg_send![webview.ns_window(), setIgnoresMouseEvents: true];
-                    }
-                });
-
-                // Allow clickthrough on the window (Windows)
-                let _ = window.clone().with_webview(move |webview| {
-                    #[cfg(target_os = "windows")]
-                    let hwnd = window.hwnd().unwrap().0;
-                    let hwnd = windows::Win32::Foundation::HWND(hwnd);
-                    unsafe {
-                        use windows::Win32::UI::WindowsAndMessaging::*;
-                        let nindex = GWL_EXSTYLE;
-                        let style = WS_EX_APPWINDOW
-                            | WS_EX_COMPOSITED
-                            | WS_EX_LAYERED
-                            | WS_EX_TRANSPARENT
-                            | WS_EX_TOPMOST;
-                        let _pre_val = SetWindowLongA(hwnd, nindex, style.0 as i32);
-                    }
-                });
 
                 // Setup tray menu
                 let separator = PredefinedMenuItem::separator(app)?;
@@ -76,6 +48,35 @@ pub fn run() {
                         std::process::exit(0);
                     }
                     _ => {}
+                });
+
+                // Open devtools on start
+                window.open_devtools();
+                window.close_devtools();
+
+                // Allow clickthrough on the window (macOS)
+                let _ = window.clone().with_webview(move |webview| {
+                    #[cfg(target_os = "macos")]
+                    unsafe {
+                        let () = msg_send![webview.ns_window(), setIgnoresMouseEvents: true];
+                    }
+                });
+
+                // Allow clickthrough on the window (Windows)
+                let _ = window.clone().with_webview(move |_webview| {
+                    #[cfg(target_os = "windows")]
+                    let hwnd = window.hwnd().unwrap().0;
+                    let hwnd = windows::Win32::Foundation::HWND(hwnd);
+                    unsafe {
+                        use windows::Win32::UI::WindowsAndMessaging::*;
+                        let nindex = GWL_EXSTYLE;
+                        let style = WS_EX_APPWINDOW
+                            | WS_EX_COMPOSITED
+                            | WS_EX_LAYERED
+                            | WS_EX_TRANSPARENT
+                            | WS_EX_TOPMOST;
+                        let _pre_val = SetWindowLongA(hwnd, nindex, style.0 as i32);
+                    }
                 });
             }
             Ok(())
