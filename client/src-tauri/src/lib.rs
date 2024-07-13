@@ -28,7 +28,7 @@ pub fn run() {
                 // Setup tray icon
                 let tray = app.tray_by_id("main").unwrap();
                 tray.set_menu(Some(menu))?;
-                tray.on_tray_icon_event(|tray, event| {
+                tray.on_tray_icon_event(|_tray, event| {
                     if let TrayIconEvent::Click {
                         button: MouseButton::Left,
                         button_state: MouseButtonState::Up,
@@ -38,13 +38,14 @@ pub fn run() {
                         // TODO: Send a message to the webview
                     }
                 });
-                tray.on_menu_event(|_, event| match event.menu_item_id {
+                tray.on_menu_event(move |_app_handle, event| match event.id().as_ref() {
                     "show_settings" => {
                         // TODO: Create a settings window
                     }
                     "exit" => {
-                        app.exit(0);
+                        std::process::exit(0);
                     }
+                    _ => {}
                 });
             }
             Ok(())
