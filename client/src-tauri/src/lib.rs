@@ -15,8 +15,6 @@ pub fn run() {
                 window.open_devtools();
                 window.close_devtools();
 
-                // TODO: Connect to websocket as a headless client
-
                 // Setup tray menu
                 let separator = PredefinedMenuItem::separator(app)?;
                 let show_settings =
