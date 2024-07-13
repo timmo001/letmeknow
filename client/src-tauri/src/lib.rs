@@ -27,12 +27,6 @@ async fn set_window(app: tauri::AppHandle) -> Result<(), String> {
     let window = app.get_webview_window("main").unwrap();
 
     let _ = window.clone().with_webview(move |_webview| {
-        // Allow clickthrough on the window (macOS)
-        #[cfg(target_os = "macos")]
-        unsafe {
-            let () = msg_send![webview.ns_window(), setIgnoresMouseEvents: true];
-        }
-
         // Allow clickthrough on the window (Windows)
         #[cfg(target_os = "windows")]
         unsafe {
