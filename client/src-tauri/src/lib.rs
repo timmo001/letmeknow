@@ -10,7 +10,6 @@ mod shared;
 use tauri::{
     Emitter,
     menu::{MenuBuilder, MenuItemBuilder, PredefinedMenuItem},
-    tray::{MouseButton, MouseButtonState, TrayIconEvent},
     Manager,
 };
 use tauri_plugin_autostart::MacosLauncher;
