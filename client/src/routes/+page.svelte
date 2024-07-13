@@ -128,9 +128,11 @@
     console.log("Setting up server connection");
 
     try {
-      const socket = new WebSocket(
-        `ws://${settings.server.host}:${settings.server.port}/websocket`
-      );
+      const url = `ws://${settings.server.host}:${settings.server.port}/websocket`;
+
+      console.log(`Connecting to '${url}'' as '${userID}'`);
+
+      const socket = new WebSocket(url);
 
       socket.onclose = () => {
         console.log("Connection closed");
