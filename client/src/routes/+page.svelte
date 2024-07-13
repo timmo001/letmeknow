@@ -207,7 +207,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background-color: rgba(15, 23, 42, 0.6);
+    background-color: rgba(15, 23, 42, 0.5);
     border-radius: 1rem;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
