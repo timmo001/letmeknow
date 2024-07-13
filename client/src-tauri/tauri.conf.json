@@ -12,6 +12,7 @@
     "windows": [
       {
         "title": "LetMeKnow",
+        "url": "/",
         "width": 370,
         "height": 86,
         "x": 24,

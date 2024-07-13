@@ -1,9 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { getCurrent, LogicalSize } from "@tauri-apps/api/window";
+  import { v4 as uuidv4 } from "uuid";
 
   import type { Register } from "../types/register";
   import type { Notification } from "../types/notification";
+
+  const userID = `client-${uuidv4().replaceAll("-", "")}`;
 
   const NOTIFICATION_CONNECTING: Notification = {
     title: "LetMeKnow Client Connecting",
@@ -137,7 +140,7 @@
         // Register the client with the server
         const register: Register = {
           type: "register",
-          userID: "client", // TODO: Use a real user ID
+          userID, // TODO: Use a real user ID
         };
         socket.send(JSON.stringify(register));
       };
