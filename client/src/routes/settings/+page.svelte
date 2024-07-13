@@ -38,8 +38,10 @@
     // Add a small delay to show the loader animation
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    if ((await invoke("update_settings", { settings })) === null) {
+    const result = await invoke<Settings>("update_settings", { settings });
+    if (result) {
       console.log("Settings saved");
+      settings = result;
       isSaving = false;
       await hideWindow();
     }

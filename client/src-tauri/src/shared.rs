@@ -1,4 +1,4 @@
-use log::debug;
+use log::{debug, info};
 use platform_dirs::AppDirs;
 
 pub fn get_data_path() -> String {
@@ -14,4 +14,20 @@ pub fn get_data_path() -> String {
     }
 
     path
+}
+
+pub fn restart_app() {
+    // Don't restart in debug mode
+    if cfg!(debug_assertions) {
+        info!("Not restarting: in debug mode");
+        return;
+    }
+
+    info!("Restarting app");
+
+    // Restart the app
+    std::process::Command::new(std::env::current_exe().unwrap())
+        .spawn()
+        .unwrap();
+    std::process::exit(0);
 }

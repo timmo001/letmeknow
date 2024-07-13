@@ -1,7 +1,7 @@
 use log::info;
 use serde::{Deserialize, Serialize};
 
-use crate::shared::get_data_path;
+use crate::shared::{get_data_path, restart_app};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Settings {
@@ -60,11 +60,24 @@ pub fn get_settings() -> Settings {
 }
 
 #[tauri::command]
-pub fn update_settings(settings: Settings) -> Result<(), String> {
-    // Write settings to {config_path}\settings.json
-    let settings_string = serde_json::to_string(&settings).unwrap();
-    let settings_path = format!("{}/settings.json", get_data_path());
-    std::fs::write(settings_path, settings_string).unwrap();
+pub fn update_settings(settings: Settings) -> Result<Settings, String> {
+    // Get current settings to compare
+    let current_settings = get_settings();
 
-    Ok(())
+    // Write settings to {config_path}\settings.json
+    let new_settings_string = serde_json::to_string(&settings).unwrap();
+
+    // Check if any settings have changed
+    let current_settings_string = serde_json::to_string(&current_settings).unwrap();
+    if current_settings_string != new_settings_string {
+        info!("Settings changed: {}", new_settings_string);
+
+        let settings_path = format!("{}/settings.json", get_data_path());
+        std::fs::write(settings_path, new_settings_string).unwrap();
+
+        // Restart the app to apply the new settings
+        restart_app();
+    }
+
+    Ok(settings)
 }
