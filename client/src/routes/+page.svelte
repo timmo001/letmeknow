@@ -40,6 +40,17 @@
     console.log("Showing window");
     await getCurrent().show();
     await invoke("set_window", {});
+
+    // Update the window size
+    updateWindowSize();
+
+    // Hide the window after the timeout
+    if (timeoutHide) clearTimeout(timeoutHide);
+
+    if (notification.timeout)
+      timeoutHide = setTimeout(() => {
+        hideWindow();
+      }, notification.timeout);
   }
 
   async function resize(
@@ -81,7 +92,7 @@
     }, 500);
   }
 
-  async function updateData(n: Notification): Promise<void> {
+  async function updateNotification(n: Notification): Promise<void> {
     // Update data
     console.log("Updating data:", n);
 
@@ -92,24 +103,15 @@
       document.title = n.title;
     }
 
+    // Set the default timeout if not provided
+    if (!notification.timeout) notification.timeout = 10000;
+
     // Show the window
     showWindow();
-
-    // Update the window size
-    updateWindowSize();
-
-    // Set the default timeout if not provided
-    if (!n.timeout) n.timeout = 10000;
-
-    // Hide the window after the timeout
-    if (timeoutHide) clearTimeout(timeoutHide);
-    timeoutHide = setTimeout(() => {
-      hideWindow();
-    }, n.timeout);
   }
 
   async function reconnectToServer(): Promise<void> {
-    // updateData({
+    // updateNotification({
     //   title: "LetMeKnow Client Disconnected",
     //   subtitle: "Reconnecting to server in 5 seconds...",
     //   timeout: 5000,
@@ -145,12 +147,12 @@
 
       socket.onopen = () => {
         console.log("Connection established");
-        updateData(NOTIFICATION_CONNECTED);
+        updateNotification(NOTIFICATION_CONNECTED);
 
         // Register the client with the server
         const register: Register = {
           type: "register",
-          userID, // TODO: Use a real user ID
+          userID,
         };
         socket.send(JSON.stringify(register));
       };
@@ -176,7 +178,7 @@
         // Test if data is a valid notification
         if (data.type === "notification") {
           const notification: Notification = data;
-          updateData(notification);
+          updateNotification(notification);
         }
       };
     } catch (error) {
@@ -189,7 +191,7 @@
     invoke("get_settings").then((data) => {
       settings = data as Settings;
 
-      updateData(NOTIFICATION_CONNECTING);
+      updateNotification(NOTIFICATION_CONNECTING);
       setupServerConnection()
         .then(() => {
           console.log("Server setup completed");

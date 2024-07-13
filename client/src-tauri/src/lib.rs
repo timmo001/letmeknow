@@ -87,16 +87,6 @@ pub fn run() {
                 // Setup tray icon
                 let tray = app.tray_by_id("main").unwrap();
                 tray.set_menu(Some(menu))?;
-                tray.on_tray_icon_event(|_tray, event| {
-                    if let TrayIconEvent::Click {
-                        button: MouseButton::Left,
-                        button_state: MouseButtonState::Up,
-                        ..
-                    } = event
-                    {
-                        // TODO: Send a message to the webview
-                    }
-                });
                 tray.on_menu_event(move |app, event| match event.id().as_ref() {
                     "show_settings" => {
                         // Get the settings window
