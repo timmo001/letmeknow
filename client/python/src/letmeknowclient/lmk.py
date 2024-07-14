@@ -67,7 +67,12 @@ class LMKClient:
             _exc_info: Exec type.
 
         """
-        await self.close()
+        await self._close()
+
+    async def _close(self) -> None:
+        """Close open client session."""
+        if self.session and self._close_session:
+            await self.session.close()
 
     async def _ws_send(
         self,
@@ -147,11 +152,6 @@ class LMKClient:
 
         """
         return self._ws is not None and not self._ws.closed
-
-    async def close(self) -> None:
-        """Close open client session."""
-        if self.session and self._close_session:
-            await self.session.close()
 
     async def ws_connect(self) -> bool:
         """Connect to LetMeKnow websocket server.
