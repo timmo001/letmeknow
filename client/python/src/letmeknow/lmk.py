@@ -112,7 +112,7 @@ class LMKClient:
             scheme="ws",
             host=self.lmk_host,
             port=self.lmk_port,
-        ).joinpath("/websocket")
+        ).joinpath("websocket")
 
         headers = {
             "User-Agent": f"LMKClientPy/{VERSION}",
