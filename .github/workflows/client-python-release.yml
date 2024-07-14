@@ -15,9 +15,14 @@ jobs:
   release:
     name: 🚀 Release to PyPi
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - name: ⤵️ Check out code from GitHub
         uses: actions/checkout@v4.1.7
+        with:
+          ref: "master"
+          token: ${{ secrets.PUSH_TOKEN }}
       - name: 🏗 Set up Poetry
         run: pipx install poetry
         working-directory: client/python
@@ -36,15 +41,22 @@ jobs:
         run: poetry install --no-interaction
         working-directory: client/python
       - name: 🏗 Set package version
+        id: set-version-new
         run: |
           version="${{ github.event.release.tag_name }}"
           version="${version,,}"
           version="${version#v}"
+          echo $version >> $GITHUB_OUTPUT
           poetry version --no-interaction "${version}"
         working-directory: client/python
       - name: 🏗 Build package
         run: poetry build --no-interaction
         working-directory: client/python
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: client/python/dist/
+          verbose: true
       - name: 🚀 Publish to PyPi
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
@@ -52,3 +64,13 @@ jobs:
           poetry config pypi-token.pypi "${PYPI_TOKEN}"
           poetry publish --no-interaction
         working-directory: client/python
+      - name: ⤵️ Pull latest changes from GitHub
+        run: |
+          git pull --ff
+      - name: 🖊 Commit
+        uses: stefanzweifel/git-auto-commit-action@v5.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
+        with:
+          commit_message: |
+            Bump python client version to ${{ steps.set-version-new.outputs.version }}
