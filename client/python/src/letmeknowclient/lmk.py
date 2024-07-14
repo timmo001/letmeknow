@@ -137,6 +137,17 @@ class LMKClient:
             error=response.type.name,
         )
 
+    @property
+    def ws_connected(self) -> bool:
+        """Check if the websocket is connected.
+
+        Returns
+        -------
+            True if the websocket is connected.
+
+        """
+        return self._ws is not None and not self._ws.closed
+
     async def close(self) -> None:
         """Close open client session."""
         if self.session and self._close_session:
