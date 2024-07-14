@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { invoke } from "@tauri-apps/api/core";
-  import { getCurrent, LogicalSize } from "@tauri-apps/api/window";
+  import { getCurrentWindow, LogicalSize } from "@tauri-apps/api/window";
   import { v4 as uuidv4 } from "uuid";
 
   import type { Notification } from "$lib/types/notification";
@@ -33,12 +33,12 @@
 
   async function hideWindow(): Promise<void> {
     console.log("Hiding window");
-    await getCurrent().hide();
+    await getCurrentWindow().hide();
   }
 
   async function showWindow(): Promise<void> {
     console.log("Showing window");
-    await getCurrent().show();
+    await getCurrentWindow().show();
     await invoke("set_window", {});
 
     // Update the window size
@@ -60,7 +60,7 @@
     console.log("Resizing window:", { width, height });
 
     // Resize the window
-    await getCurrent().setSize(new LogicalSize(width, height));
+    await getCurrentWindow().setSize(new LogicalSize(width, height));
   }
 
   function updateWindowSize(): void {
