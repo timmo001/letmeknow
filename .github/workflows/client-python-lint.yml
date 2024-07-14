@@ -18,7 +18,7 @@ env:
 
 jobs:
   codespell:
-    name: codespell
+    name: 👕 Codespell
     runs-on: ubuntu-latest
     steps:
       - name: ⤵️ Check out code from GitHub
@@ -44,7 +44,7 @@ jobs:
         run: poetry run codespell src/**/*.py
         working-directory: client/python
   ruff:
-    name: Ruff
+    name: 👕 Ruff
     runs-on: ubuntu-latest
     steps:
       - name: ⤵️ Check out code from GitHub
@@ -73,7 +73,7 @@ jobs:
         run: poetry run ruff format --check .
         working-directory: client/python
   pylint:
-    name: pylint
+    name: 👕 PyLint
     runs-on: ubuntu-latest
     steps:
       - name: ⤵️ Check out code from GitHub
@@ -99,7 +99,7 @@ jobs:
         run: poetry run pylint **/*.py
         working-directory: client/python
   mypy:
-    name: mypy
+    name: 👕 MyPy
     runs-on: ubuntu-latest
     steps:
       - name: ⤵️ Check out code from GitHub

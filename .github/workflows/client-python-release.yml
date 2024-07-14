@@ -13,7 +13,7 @@ env:
 
 jobs:
   release:
-    name: Release to PyPi
+    name: 🚀 Release to PyPi
     runs-on: ubuntu-latest
     steps:
       - name: ⤵️ Check out code from GitHub
