@@ -4,9 +4,8 @@ from __future__ import annotations
 
 import asyncio
 from dataclasses import dataclass
-from importlib import metadata
 from socket import gaierror
-from typing import TYPE_CHECKING, Any, Final
+from typing import TYPE_CHECKING, Any
 
 from aiohttp import (
     ClientConnectionError,
@@ -16,6 +15,7 @@ from aiohttp import (
 )
 from yarl import URL
 
+from .const import LOGGER, TARGETS_ALL_CLIENTS, VERSION
 from .exceptions import LMKConnectionError, LMKNotConnectedError
 from .models import (
     LMKClientType,
@@ -31,8 +31,6 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from typing_extensions import Self
-
-VERSION: Final[str] = metadata.version(__package__)
 
 
 @dataclass
@@ -83,6 +81,8 @@ class LMKClient:
         if self._ws is None:
             raise LMKNotConnectedError
 
+        LOGGER.debug("Sending data to websocket server: %s", data)
+
         await self._ws.send_json(data)
 
         async with asyncio.timeout(self.request_timeout):
@@ -113,6 +113,8 @@ class LMKClient:
             host=self.lmk_host,
             port=self.lmk_port,
         ).joinpath("websocket")
+
+        LOGGER.debug("Connecting to websocket server: %s", url)
 
         headers = {
             "User-Agent": f"LMKClientPy/{VERSION}",
@@ -147,6 +149,8 @@ class LMKClient:
             The response from the websocket server.
 
         """
+        LOGGER.debug("Registering with the websocket server as: %s", self.lmk_user_id)
+
         return await self._ws_send(
             LMKWSRegister(
                 type=LMKWSRequestType.REGISTER,
@@ -157,23 +161,31 @@ class LMKClient:
     async def ws_send_notification(
         self,
         notification: LMKNotification,
+        targets: list[str] | None = None,
     ) -> LMKWSResponseSuccess | LMKWSResponseError:
         """Send a notification to the websocket server.
 
         Args:
         ----
             notification: Notification to send.
+            targets: List of targets to send to. Defaults to all clients.
 
         Returns:
         -------
             The response from the websocket server.
 
         """
+        if targets is None:
+            targets = TARGETS_ALL_CLIENTS
+
+        LOGGER.debug("Sending notification to the websocket server: %s", notification)
+        LOGGER.debug("Notification targets: %s", targets)
+
         return await self._ws_send(
             LMKWSNotification(
                 type=LMKWSRequestType.NOTIFICATION,
                 data=notification,
-                targets=[],
+                targets=targets,
             ).to_dict()
         )
 
