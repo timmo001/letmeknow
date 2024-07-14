@@ -4,7 +4,7 @@ use log::{info, LevelFilter};
 use crate::shared::get_data_path;
 
 pub fn setup_logger() -> Result<(), fern::InitError> {
-    let log_path = format!("{}/client.log", get_data_path());
+    let log_path = format!("{}/gui.log", get_data_path());
 
     let colors = ColoredLevelConfig::new()
         .trace(Color::BrightBlack)

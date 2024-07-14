@@ -1,7 +1,7 @@
 {
   "productName": "letmeknow-gui",
   "version": "0.0.0",
-  "identifier": "dev.timmo.letmeknow.client",
+  "identifier": "dev.timmo.letmeknow.gui",
   "build": {
     "beforeDevCommand": "bun run dev",
     "devUrl": "http://localhost:1420",

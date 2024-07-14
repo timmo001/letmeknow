@@ -6,12 +6,12 @@ updates:
     schedule:
       interval: daily
   - package-ecosystem: "npm"
-    directory: "/client"
+    directory: "/gui"
     open-pull-requests-limit: 20
     schedule:
       interval: "daily"
   - package-ecosystem: "cargo"
-    directory: "/client/src-tauri"
+    directory: "/gui/src-tauri"
     open-pull-requests-limit: 20
     schedule:
       interval: "daily"

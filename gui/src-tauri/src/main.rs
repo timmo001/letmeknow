@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    letmeknow_client_lib::run()
+    letmeknow_gui_lib::run()
 }
