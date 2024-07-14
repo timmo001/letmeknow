@@ -11,7 +11,7 @@
 
   let settings: Settings = DEFAULT_SETTINGS;
 
-  const userID = `client-${uuidv4().replaceAll("-", "")}`;
+  const userID = `client-gui-${uuidv4().replaceAll("-", "")}`;
 
   const NOTIFICATION_CONNECTING: Notification = {
     title: "LetMeKnow Client Connecting",
