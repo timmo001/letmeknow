@@ -11,3 +11,4 @@ Notifications portal
 ### Clients
 
 - [Python](https://github.com/timmo001/letmeknow-client-python)
+- Go (TODO)
