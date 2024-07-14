@@ -7,7 +7,7 @@ pub fn get_data_path() -> String {
     let data_path = app_dirs.data_dir.to_str().unwrap().to_string();
     debug!("Data path: {}", data_path);
 
-    let path = format!("{}/letmeknow-client", data_path);
+    let path = format!("{}/letmeknow-gui", data_path);
 
     if !std::path::Path::new(&path).exists() {
         std::fs::create_dir_all(&path).unwrap();

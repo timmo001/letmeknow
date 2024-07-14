@@ -1,5 +1,5 @@
 {
-  "productName": "letmeknow-client",
+  "productName": "letmeknow-gui",
   "version": "0.0.0",
   "identifier": "dev.timmo.letmeknow.client",
   "build": {
