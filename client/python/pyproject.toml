@@ -20,7 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
-packages = [{ include = "letmeknow", from = "src" }]
+packages = [{ include = "letmeknowclient", from = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -53,7 +53,7 @@ show_missing = true
 
 [tool.coverage.run]
 plugins = ["covdefaults"]
-source = ["letmeknow"]
+source = ["letmeknowclient"]
 
 [tool.mypy]
 # Specify the target platform details in config, so your developers are
@@ -132,7 +132,7 @@ fixture-parentheses = false
 mark-parentheses = false
 
 [tool.ruff.lint.isort]
-known-first-party = ["letmeknow"]
+known-first-party = ["letmeknowclient"]
 force-sort-within-sections = true
 split-on-trailing-comma = false
 combine-as-imports = true
