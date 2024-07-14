@@ -57,13 +57,6 @@ jobs:
         with:
           packages-dir: client/python/dist/
           verbose: true
-      - name: 🚀 Publish to PyPi
-        env:
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        run: |
-          poetry config pypi-token.pypi "${PYPI_TOKEN}"
-          poetry publish --no-interaction
-        working-directory: client/python
       - name: ⤵️ Pull latest changes from GitHub
         run: |
           git pull --ff
