@@ -36,15 +36,14 @@ class LMKNotification:
             image=LMKNotificationImage.from_dict(result["image"]),
         )
 
-    @classmethod
-    def to_dict(cls) -> dict[str, Any]:
-        """Convert to a dict."""
+    def to_dict(self) -> dict[str, Any]:
+        """Convert class to a dict."""
         return {
-            "type": cls.type,
-            "title": cls.title,
-            "subtitle": cls.subtitle,
-            "content": cls.content,
-            "image": cls.image.to_dict() if cls.image else None,
+            "type": self.type,
+            "title": self.title,
+            "subtitle": self.subtitle,
+            "content": self.content,
+            "image": self.image.to_dict() if self.image else None,
         }
 
 
@@ -65,13 +64,12 @@ class LMKNotificationImage:
             width=result["width"],
         )
 
-    @classmethod
-    def to_dict(cls) -> dict[str, Any]:
-        """Convert to a dict."""
+    def to_dict(self) -> dict[str, Any]:
+        """Convert class to a dict."""
         return {
-            "url": cls.url,
-            "height": cls.height,
-            "width": cls.width,
+            "url": self.url,
+            "height": self.height,
+            "width": self.width,
         }
 
 
@@ -105,12 +103,11 @@ class LMKWSRegister:
             user_id=result["userID"],
         )
 
-    @classmethod
-    def to_dict(cls) -> dict[str, Any]:
-        """Convert to a dict."""
+    def to_dict(self) -> dict[str, Any]:
+        """Convert class to a dict."""
         return {
-            "type": cls.type,
-            "userID": cls.user_id,
+            "type": self.type,
+            "userID": self.user_id,
         }
 
 
@@ -131,13 +128,12 @@ class LMKWSNotification:
             targets=result["targets"],
         )
 
-    @classmethod
-    def to_dict(cls) -> dict[str, Any]:
-        """Convert to a dict."""
+    def to_dict(self) -> dict[str, Any]:
+        """Convert class to a dict."""
         return {
-            "type": cls.type,
-            "data": cls.data.to_dict(),
-            "targets": cls.targets,
+            "type": self.type,
+            "data": self.data.to_dict(),
+            "targets": self.targets,
         }
 
 
