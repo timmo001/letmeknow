@@ -87,7 +87,7 @@ class LMKClient:
             wait_for_response: Wait for a response. Defaults to True.
 
         """
-        if self._ws is None:
+        if self._ws is None or self._ws.closed:
             raise LMKNotConnectedError
 
         # Default to waiting for a response
@@ -277,7 +277,7 @@ class LMKClient:
             cb: Callback to call when a notification is received.
 
         """
-        if self._ws is None:
+        if self._ws is None or self._ws.closed:
             raise LMKNotConnectedError
 
         async for message in self._ws:
