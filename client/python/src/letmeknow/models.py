@@ -97,10 +97,6 @@ class LMKWSRegister:
     type: LMKWSRequestType
     user_id: str
 
-    def generate_user_id(self) -> str:
-        """Generate a user ID."""
-        return f"{self.type}-{uuid4()!s}"
-
     @classmethod
     def from_dict(cls, result: dict[str, Any]) -> Self:
         """Initialize from a dict."""
@@ -116,6 +112,11 @@ class LMKWSRegister:
             "type": cls.type,
             "userID": cls.user_id,
         }
+
+    @classmethod
+    def generate_user_id(cls) -> str:
+        """Generate a user ID."""
+        return f"{cls.type}-{uuid4()!s}"
 
 
 @dataclass(slots=True)
