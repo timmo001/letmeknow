@@ -30,7 +30,7 @@ jobs:
         run: pipx install poetry
         working-directory: integration/homeassistant
       - name: 🏗 Set up Python ${{ env.DEFAULT_PYTHON }}
-        uses: actions/setup-python@v5.1.0
+        uses: actions/setup-python@v5.1.1
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
           cache: "poetry"
