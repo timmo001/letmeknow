@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import Field, dataclass
+from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any, Self
-from uuid import uuid4
 
 
 class LMKClientType(StrEnum):
@@ -39,7 +38,7 @@ class LMKNotification:
     def to_dict(self) -> dict[str, Any]:
         """Convert class to a dict."""
         return {
-            "type": self.type,
+            "type": str(self.type),
             "title": self.title,
             "subtitle": self.subtitle,
             "content": self.content,
@@ -106,7 +105,7 @@ class LMKWSRegister:
     def to_dict(self) -> dict[str, Any]:
         """Convert class to a dict."""
         return {
-            "type": self.type,
+            "type": str(self.type),
             "userID": self.user_id,
         }
 
@@ -131,7 +130,7 @@ class LMKWSNotification:
     def to_dict(self) -> dict[str, Any]:
         """Convert class to a dict."""
         return {
-            "type": self.type,
+            "type": str(self.type),
             "data": self.data.to_dict(),
             "targets": self.targets,
         }
