@@ -85,6 +85,7 @@ class LMKWSResponseType(StrEnum):
     ERROR = "error"
     NOTIFICATION_SENT = "notificationSent"
     REGISTER = "register"
+    SUCCESS = "success" # Generic success response, not sent by the server
 
 
 @dataclass(slots=True)

@@ -11,6 +11,7 @@ from aiohttp import (
     ClientConnectionError,
     ClientSession,
     ClientWebSocketResponse,
+    WSMsgType,
     WSServerHandshakeError,
 )
 from yarl import URL
@@ -25,6 +26,7 @@ from .models import (
     LMKWSRequestType,
     LMKWSResponseError,
     LMKWSResponseSuccess,
+    LMKWSResponseType,
 )
 
 if TYPE_CHECKING:
@@ -70,30 +72,62 @@ class LMKClient:
     async def _ws_send(
         self,
         data: dict[str, Any],
+        wait_for_response: bool | None = None,
     ) -> LMKWSResponseSuccess | LMKWSResponseError:
         """Send data to the websocket server.
 
         Args:
         ----
             data: Data to send.
+            wait_for_response: Wait for a response. Defaults to True.
 
         """
         if self._ws is None:
             raise LMKNotConnectedError
 
+        # Default to waiting for a response
+        if wait_for_response is None:
+            wait_for_response = True
+
         LOGGER.debug("Sending data to websocket server: %s", data)
 
         await self._ws.send_json(data)
 
+        if not wait_for_response:
+            return LMKWSResponseSuccess(
+                type=LMKWSResponseType.SUCCESS,
+                succeeded=True,
+                message="No response expected",
+            )
+
         async with asyncio.timeout(self.request_timeout):
             response = await self._ws.receive()
 
-        # Get the response data
-        response_data: dict[str, Any] = response.json()
+        if response.type == WSMsgType.TEXT:
+            # Get the response data
+            response_data: dict[str, Any] = response.json()
 
-        if response.type == 1:
+            if "error" in response_data:
+                return LMKWSResponseError.from_dict(response_data)
+
             return LMKWSResponseSuccess.from_dict(response_data)
-        return LMKWSResponseError.from_dict(response_data)
+
+        if response.type in (
+            WSMsgType.CLOSE,
+            WSMsgType.CLOSED,
+            WSMsgType.CLOSING,
+        ):
+            return LMKWSResponseError(
+                type=LMKWSResponseType.ERROR,
+                message="Connection closed",
+                error="Connection closed",
+            )
+
+        return LMKWSResponseError(
+            type=LMKWSResponseType.ERROR,
+            message="Unused response type",
+            error=response.type.name,
+        )
 
     async def close(self) -> None:
         """Close open client session."""
