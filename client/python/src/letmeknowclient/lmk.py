@@ -91,7 +91,14 @@ class LMKClient:
 
         LOGGER.debug("Sending data to websocket server: %s", data)
 
-        await self._ws.send_json(data)
+        try:
+            await self._ws.send_json(data)
+        except (
+            ClientConnectionError,
+            ConnectionResetError,
+            gaierror,
+        ) as error:
+            raise LMKConnectionError from error
 
         if not wait_for_response:
             return LMKWSResponseSuccess(
@@ -117,6 +124,7 @@ class LMKClient:
             WSMsgType.CLOSED,
             WSMsgType.CLOSING,
         ):
+            self._ws = None
             return LMKWSResponseError(
                 type=LMKWSResponseType.ERROR,
                 message="Connection closed",
