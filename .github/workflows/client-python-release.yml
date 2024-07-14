@@ -43,11 +43,7 @@ jobs:
       - name: 🏗 Set package version
         id: set-version-new
         run: |
-          version="${{ github.event.release.tag_name }}"
-          version="${version,,}"
-          version="${version#v}"
-          echo $version >> $GITHUB_OUTPUT
-          poetry version --no-interaction "${version}"
+          poetry version --no-interaction "${{ github.event.release.tag_name }}"
         working-directory: client/python
       - name: 🏗 Build package
         run: poetry build --no-interaction
@@ -66,4 +62,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
         with:
           commit_message: |
-            Bump python client version to ${{ steps.set-version-new.outputs.version }}
+            Bump python client version to ${{ github.event.release.tag_name }}
