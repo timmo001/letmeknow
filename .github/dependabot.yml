@@ -20,6 +20,11 @@ updates:
     open-pull-requests-limit: 20
     schedule:
       interval: "daily"
+  - package-ecosystem: "pip"
+    directory: "/integration/homeassistant"
+    open-pull-requests-limit: 20
+    schedule:
+      interval: "daily"
   - package-ecosystem: "gomod"
     directory: "/server"
     open-pull-requests-limit: 20
