@@ -96,5 +96,5 @@ jobs:
         run: poetry install --no-interaction
         working-directory: client/python
       - name: 🚀 Run pylint
-        run: poetry run pre-commit run pylint --all-files
+        run: poetry run pylint **/*.py
         working-directory: client/python
