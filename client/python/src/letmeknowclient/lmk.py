@@ -194,6 +194,30 @@ class LMKClient:
 
         return True
 
+    async def ws_keep_alive(self) -> None:
+        """Keep the websocket connection alive."""
+        while self.ws_connected:
+            await asyncio.sleep(10)
+
+        LOGGER.info("Websocket connection closed, reconnecting")
+
+        if not await self.ws_connect():
+            LOGGER.error("Failed to reconnect to websocket server")
+            return
+
+        if (
+            register_response := await self.ws_register()
+        ).type != LMKWSResponseType.REGISTER:
+            LOGGER.error(
+                "Failed to register with websocket server: %s", register_response
+            )
+            return
+
+        LOGGER.info("Reconnected to websocket server")
+
+        # Continue to keep the connection alive
+        await self.ws_keep_alive()
+
     async def ws_register(self) -> LMKWSResponseSuccess | LMKWSResponseError:
         """Register with the websocket server.
 
