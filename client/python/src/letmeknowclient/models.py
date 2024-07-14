@@ -154,6 +154,14 @@ class LMKWSResponseError:
             error=result["error"],
         )
 
+    def to_dict(self) -> dict[str, Any]:
+        """Convert class to a dict."""
+        return {
+            "type": str(self.type),
+            "message": self.message,
+            "error": self.error,
+        }
+
 
 @dataclass(slots=True)
 class LMKWSResponseSuccess:
@@ -171,3 +179,11 @@ class LMKWSResponseSuccess:
             succeeded=result["succeeded"],
             message=result["message"],
         )
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert class to a dict."""
+        return {
+            "type": str(self.type),
+            "succeeded": self.succeeded,
+            "message": self.message,
+        }
