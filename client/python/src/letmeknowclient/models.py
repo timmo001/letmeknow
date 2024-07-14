@@ -23,16 +23,20 @@ class LMKNotification:
     subtitle: str | None = None
     content: str | None = None
     image: LMKNotificationImage | None = None
+    timeout: int | None = None
 
     @classmethod
     def from_dict(cls, result: dict[str, Any]) -> Self:
         """Initialize from a dict."""
         return cls(
-            type=result["type"],
-            title=result["title"],
-            subtitle=result["subtitle"],
-            content=result["content"],
-            image=LMKNotificationImage.from_dict(result["image"]),
+            type=result.get("type"),
+            title=result.get("title"),
+            subtitle=result.get("subtitle"),
+            content=result.get("content"),
+            image=LMKNotificationImage.from_dict(result["image"])
+            if result.get("image")
+            else None,
+            timeout=result.get("timeout"),
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -43,6 +47,7 @@ class LMKNotification:
             "subtitle": self.subtitle,
             "content": self.content,
             "image": self.image.to_dict() if self.image else None,
+            "timeout": self.timeout,
         }
 
 
