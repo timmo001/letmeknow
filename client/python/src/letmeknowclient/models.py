@@ -51,24 +51,18 @@ class LMKNotificationImage:
     """Notification image."""
 
     url: str
-    height: float | None = None
-    width: float | None = None
 
     @classmethod
     def from_dict(cls, result: dict[str, Any]) -> Self:
         """Initialize from a dict."""
         return cls(
             url=result["url"],
-            height=result["height"],
-            width=result["width"],
         )
 
     def to_dict(self) -> dict[str, Any]:
         """Convert class to a dict."""
         return {
             "url": self.url,
-            "height": self.height,
-            "width": self.width,
         }
 
 
