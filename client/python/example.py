@@ -8,7 +8,7 @@ from dataclasses import dataclass
 import logging
 from typing import Final
 
-from letmeknow import (
+from letmeknowclient import (
     LMKClient,
     LMKClientType,
     LMKNotification,
