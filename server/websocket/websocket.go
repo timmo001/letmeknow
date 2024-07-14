@@ -228,40 +228,45 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 		var content *string
 
 		requestData := request["data"].(map[string]interface{})
+		log.Println("Request data:", requestData)
 		if _, ok := requestData["title"]; ok {
-			t := requestData["title"].(string)
-			title = &t
+			if t, ok := requestData["title"].(string); ok {
+				title = &t
+			}
 		}
 		if _, ok := requestData["subtitle"]; ok {
-			s := requestData["subtitle"].(string)
-			subtitle = &s
+			if s, ok := requestData["subtitle"].(string); ok {
+				subtitle = &s
+			}
 		}
 		if _, ok := requestData["content"]; ok {
-			c := requestData["content"].(string)
-			content = &c
+			if c, ok := requestData["content"].(string); ok {
+				content = &c
+			}
 		}
 
 		var image *typesNotification.Image
 		if _, ok := requestData["image"]; ok {
-			var requestDataImage = requestData["image"].(map[string]interface{})
-			var height float32
-			var width float32
-			var url string
+			if i, ok := requestData["image"].(map[string]interface{}); ok {
+				var height float32
+				var width float32
+				var url string
 
-			if _, ok := requestDataImage["height"]; ok {
-				height = float32(requestDataImage["height"].(float64))
-			}
-			if _, ok := requestDataImage["width"]; ok {
-				width = float32(requestDataImage["width"].(float64))
-			}
-			if _, ok := requestDataImage["url"]; ok {
-				url = requestDataImage["url"].(string)
-			}
+				if _, ok := i["height"]; ok {
+					height = float32(i["height"].(float64))
+				}
+				if _, ok := i["width"]; ok {
+					width = float32(i["width"].(float64))
+				}
+				if _, ok := i["url"]; ok {
+					url = i["url"].(string)
+				}
 
-			image = &typesNotification.Image{
-				Height: height,
-				Width:  width,
-				URL:    url,
+				image = &typesNotification.Image{
+					Height: height,
+					Width:  width,
+					URL:    url,
+				}
 			}
 		}
 
