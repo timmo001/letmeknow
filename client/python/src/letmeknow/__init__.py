@@ -13,6 +13,7 @@ from .models import (
     LMKWSResponseSuccess,
     LMKWSResponseType,
 )
+from .utils import generate_user_id
 
 __all__ = [
     "LMKClient",
@@ -28,4 +29,5 @@ __all__ = [
     "LMKWSResponseError",
     "LMKWSResponseSuccess",
     "LMKWSResponseType",
+    "generate_user_id",
 ]

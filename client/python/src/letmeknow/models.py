@@ -113,11 +113,6 @@ class LMKWSRegister:
             "userID": cls.user_id,
         }
 
-    @classmethod
-    def generate_user_id(cls) -> str:
-        """Generate a user ID."""
-        return f"{cls.type}-{uuid4()!s}"
-
 
 @dataclass(slots=True)
 class LMKWSNotification:
