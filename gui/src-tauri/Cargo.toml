@@ -1,6 +1,6 @@
 [package]
 name = "letmeknow-gui"
-version = "0.4.0"
+version = "0.4.1"
 description = "LetMeKnow gui"
 authors = ["you"]
 edition = "2021"
