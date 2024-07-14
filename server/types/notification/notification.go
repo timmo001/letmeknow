@@ -3,13 +3,11 @@ package notification
 import "fmt"
 
 type Image struct {
-	Height float32 `json:"height"`
-	Width  float32 `json:"width"`
 	URL    string  `json:"url"`
 }
 
 func (i Image) Display() string {
-	return fmt.Sprintf("  Height: %f\n  Width: %f\n  URL: %s", i.Height, i.Width, i.URL)
+	return fmt.Sprintf("  URL: %s", i.URL)
 }
 
 type Notification struct {

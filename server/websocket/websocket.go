@@ -248,24 +248,14 @@ func WebSocket(w http.ResponseWriter, r *http.Request) {
 		var image *typesNotification.Image
 		if _, ok := requestData["image"]; ok {
 			if i, ok := requestData["image"].(map[string]interface{}); ok {
-				var height float32
-				var width float32
 				var url string
 
-				if _, ok := i["height"]; ok {
-					height = float32(i["height"].(float64))
-				}
-				if _, ok := i["width"]; ok {
-					width = float32(i["width"].(float64))
-				}
 				if _, ok := i["url"]; ok {
 					url = i["url"].(string)
 				}
 
 				image = &typesNotification.Image{
-					Height: height,
-					Width:  width,
-					URL:    url,
+					URL: url,
 				}
 			}
 		}
