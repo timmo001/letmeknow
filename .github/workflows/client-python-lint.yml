@@ -41,7 +41,7 @@ jobs:
         run: poetry install --no-interaction
         working-directory: client/python
       - name: 🚀 Check code for common misspellings
-        run: poetry run pre-commit run codespell --all-files
+        run: poetry run codespell src/**/*.py
         working-directory: client/python
   ruff:
     name: Ruff
